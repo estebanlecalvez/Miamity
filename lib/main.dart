@@ -39,20 +39,24 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Text(
-              "name:"+document['firstname'],
-              style:Theme.of(context).textTheme.headline,
+              document['firstname']+"\n"+document['lastname'],
+              style:Theme.of(context).textTheme.body1,
             ),
           ),
-          Container(
-            decoration: const BoxDecoration(
-              color:Color(0xffddddff),
-            ),
-            padding: const EdgeInsets.all(10.0),
+          
+           Expanded(
             child: Text(
-              document['lastname'],
-              style: Theme.of(context).textTheme.display1,
-            )
-          )
+              document['username']+"\n"+document['password']+"\n"+document['phone'],
+              style:Theme.of(context).textTheme.body1,
+            ),
+          ),
+           Expanded(
+            child: Text(
+              document['email'],
+              style:Theme.of(context).textTheme.body1,
+            ),
+          ),
+          
         ],
         ),
         onTap: () {
