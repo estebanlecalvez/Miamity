@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "406973212845",
+    "firebase_url": "https://miamitymds-2bf8d.firebaseio.com",
+    "project_id": "miamitymds-2bf8d",
+    "storage_bucket": "miamitymds-2bf8d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406973212845:android:27ef2d1c3855c58b6d3e24",
+        "android_client_info": {
+          "package_name": "fr.mds.miamitymds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406973212845-r1v9vec7ojp5somj0bmudviigq2nka15.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406973212845-r1v9vec7ojp5somj0bmudviigq2nka15.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
