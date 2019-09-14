@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
       primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Liste des users'),
+      home: MyHomePage(title: 'Liste des users Miamity'),
     );
   }
 }
@@ -34,54 +34,84 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   
   Widget _buildListItem(BuildContext context, DocumentSnapshot document){
-    return ListTile(
-      title:Row(
-        children: [
-          Expanded(
-            child: Text(
-              document['firstname']+"\n"+document['lastname'],
-              style:Theme.of(context).textTheme.body1,
-            ),
+    return Card(
+        child: Column(
+          children: <Widget>[
+          Row(  
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.person),
+                  Padding(padding:EdgeInsets.only(right:60)),
+                ]),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    document["firstname"]+" "+document["lastname"],
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  Padding(padding: EdgeInsets.only(bottom: 10),),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "Email: ",
+                        style:TextStyle(fontWeight: FontWeight.bold)
+                      ),
+                      Text(
+                        document["email"],
+                      )
+                      
+                    ],
+                    ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "Username: ",
+                        style:TextStyle(fontWeight: FontWeight.bold)
+                      ),
+                      Text(
+                        document["username"],
+                      )
+                      
+                    ],
+                    ),                ]
+              ),
+            ],
           ),
-          
-           Expanded(
-            child: Text(
-              document['username']+"\n"+document['password']+"\n"+document['phone'],
-              style:Theme.of(context).textTheme.body1,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                color: Colors.black,
+                child: Text("See user [TODO]"),
+                onPressed:null,
+              )
+            ],
           ),
-           Expanded(
-            child: Text(
-              document['email'],
-              style:Theme.of(context).textTheme.body1,
-            ),
-          ),
-          
         ],
-        ),
-        onTap: () {
-          
-        },
-      );
+      )
+    );
   }
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-      appBar: AppBar(
-       title: Text(widget.title),
-      ),
-      body: StreamBuilder(
-        stream: Firestore.instance.collection('users').snapshots(),
-        builder: (context,snapshot){
-          if(!snapshot.hasData) return const Text("Loading...");
-          return ListView.builder(
-            itemExtent:80.0,
-            itemCount:snapshot.data.documents.length,
-            itemBuilder: (context,index) =>
-              _buildListItem(context,snapshot.data.documents[index]),
-          );
-        }),
-      );
+    appBar: AppBar(
+      title: Text(widget.title),
+    ),
+    body: StreamBuilder(
+      stream: Firestore.instance.collection('users').snapshots(),
+      builder: (context,snapshot){
+        if(!snapshot.hasData) return const Text("Loading...");
+        return ListView.builder(
+          itemCount:snapshot.data.documents.length,
+          itemBuilder: (context,index) =>
+            _buildListItem(context,snapshot.data.documents[index]),
+        );
+      }),
+    );
   }
 }
 
