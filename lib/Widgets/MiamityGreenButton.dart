@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MiamityGreenButton extends StatelessWidget {
-  MiamityGreenButton(this.title);
+  MiamityGreenButton(this.title,@required this.onPressed);
 
   // Fields in a Widget subclass are always marked "final".
   final String title;
+  final Function onPressed;
 
   @override
   Widget build(BuildContext context) {

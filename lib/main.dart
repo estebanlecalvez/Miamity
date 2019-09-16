@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Widgets/MiamityGreenButton.dart';
+import 'ShowUserPage.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Miamity',
       theme: ThemeData(
       primarySwatch: Colors.green,
-      cardColor: Colors.grey[200]
+      cardColor: Colors.grey[100]
       ),
       home: MyHomePage(title: 'Liste des users Miamity'),
       
@@ -48,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+
   _showAddUserDialog() async {
   await showDialog<String>(
     context: context,
@@ -69,27 +71,22 @@ class _MyHomePageState extends State<MyHomePage> {
               controller: userLastNameController,
             ),
             TextField(
-              autofocus: false,
               decoration: InputDecoration(labelText: 'Phone'),
               controller: userPhoneController,
             ),
             TextField(
-              autofocus: false,
               decoration: InputDecoration(labelText: 'Email*'),
               controller: userEmailController,
             ),
             TextField(
-              autofocus: false,
               decoration: InputDecoration(labelText: 'Username*'),
               controller: userUsernameController,
             ),
             TextField(
-              autofocus: false,
               decoration: InputDecoration(labelText: 'Password*'),
               controller: userPasswordController,
             ),
             TextField(
-              autofocus: false,
               decoration: InputDecoration(labelText: 'Password confirmation*'),
               controller: userPasswordConfirmationController,
             ),
@@ -105,11 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
         FlatButton(
           child: Text('Add'),
           onPressed: (){
-            if (userEmailController.text.isNotEmpty &&
-                userUsernameController.text.isNotEmpty &&
-                userPasswordController.text.isNotEmpty &&
-                userPasswordConfirmationController.text.isNotEmpty
-                ) {
+            if(userUsernameController.text.isNotEmpty &&
+              userPasswordController.text.isNotEmpty &&
+              userEmailController.text.isNotEmpty &&
+              userPasswordConfirmationController.text.isNotEmpty &&
+              userPasswordConfirmationController.text == userPasswordController.text){
               Firestore.instance
                 .collection('users')
                 .add({
@@ -129,11 +126,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 userPasswordController.clear(),
                 userUsernameController.clear(),
               })
-              .catchError((err) => print(err));
-          }else{
-            print("Aïe carramba");
+              .catchError((err) => err);
+       
+            }
           }
-        })
+        ),
       ],
     ),
   );
@@ -184,14 +181,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         document["username"],
                       ),
                     ],
-                    ),                ]
+                    ),
+                ]
               ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              MiamityGreenButton("See user")
+              MiamityGreenButton("See user",(){  
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ShowUserPage()),
+                );}
+              ),
             ],
           ),
         ],
@@ -200,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
     appBar: AppBar(
       title: Text(widget.title),
     ),
@@ -227,6 +230,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 }
+              
+
 
 
 
