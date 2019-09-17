@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:miamitymds/AddUserPage.dart';
+import 'package:miamitymds/Utils/Transitions/ScalePageTransition.dart';
 import 'Widgets/MiamityGreenButton.dart';
 import 'ShowUserPage.dart';
 void main() => runApp(MyApp());
@@ -13,8 +15,7 @@ class MyApp extends StatelessWidget {
       primarySwatch: Colors.green,
       cardColor: Colors.grey[100]
       ),
-      home: MyHomePage(title: 'Liste des users Miamity'),
-      
+      home: MyHomePage(title: 'Liste des users Miamity')
     );
   }
 }
@@ -50,154 +51,63 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
-  _showAddUserDialog() async {
-  await showDialog<String>(
-    context: context,
-    child: AlertDialog(
-      contentPadding: const EdgeInsets.all(16.0),
-      content: 
-      Container(
-        child: 
-          ListView(
-            children: <Widget>[
-              Text("Add user",style: TextStyle(fontSize: 20.0,color: Colors.green),),
-            TextField(
-              autofocus: true,
-              decoration: InputDecoration(labelText: 'Firstname'),
-              controller: userFirstnameController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Lastname'),
-              controller: userLastNameController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Phone'),
-              controller: userPhoneController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Email*'),
-              controller: userEmailController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Username*'),
-              controller: userUsernameController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Password*'),
-              controller: userPasswordController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Password confirmation*'),
-              controller: userPasswordConfirmationController,
-            ),
-          ],
-          ),
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context);
-          }),
-        FlatButton(
-          child: Text('Add'),
-          onPressed: (){
-            if(userUsernameController.text.isNotEmpty &&
-              userPasswordController.text.isNotEmpty &&
-              userEmailController.text.isNotEmpty &&
-              userPasswordConfirmationController.text.isNotEmpty &&
-              userPasswordConfirmationController.text == userPasswordController.text){
-              Firestore.instance
-                .collection('users')
-                .add({
-                  "firstname": userFirstnameController.text,
-                  "lastname": userLastNameController.text,
-                  "email": userEmailController.text,
-                  "phone": userPhoneController.text,
-                  "username": userUsernameController.text,
-                  "password": userPasswordController.text,
-              })
-              .then((result) => {
-                Navigator.pop(context),
-                userEmailController.clear(),
-                userFirstnameController.clear(),
-                userLastNameController.clear(),
-                userPasswordConfirmationController.clear(),
-                userPasswordController.clear(),
-                userUsernameController.clear(),
-              })
-              .catchError((err) => err);
-       
-            }
-          }
-        ),
-      ],
-    ),
-  );
-}
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document){
-    return Card(
-      key: document["id"],
-      margin: EdgeInsets.all(5.0),
-        child: Column(
-          children: <Widget>[
-          Row(  
+    return  new GestureDetector(
+      onTap:(){Navigator.push(context,MaterialPageRoute(builder: (context)=> ShowUserPage(document: document)));},
+      child:new Card(
+        key: document["id"],
+          child: 
+          Container(
+            padding:EdgeInsets.all(10),
+            child: Column(
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.person),
-                  Padding(padding:EdgeInsets.only(right:60)),
-                ]),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    document["firstname"]+" "+document["lastname"],
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  Padding(padding: EdgeInsets.only(bottom: 10),),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Email: ",
-                        style:TextStyle(fontWeight: FontWeight.bold)
-                      ),
-                      Text(
-                        document["email"],
-                      )
-                      
-                    ],
+            Row(  
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.person),
+                    Padding(padding:EdgeInsets.only(right:60)),
+                  ]),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      document["firstname"]+" "+document["lastname"],
+                      style: TextStyle(fontSize: 20.0),
                     ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Username: ",
-                        style:TextStyle(fontWeight: FontWeight.bold)
+                    Padding(padding: EdgeInsets.only(bottom: 10),),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Email: ",
+                          style:TextStyle(fontWeight: FontWeight.bold)
+                        ),
+                        Text(
+                          document["email"],
+                        )
+                        
+                      ],
                       ),
-                      Text(
-                        document["username"],
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Username: ",
+                          style:TextStyle(fontWeight: FontWeight.bold)
+                        ),
+                        Text(
+                          document["username"],
+                        ),
+                      ],
                       ),
-                    ],
-                    ),
-                ]
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              MiamityGreenButton("See user",(){  
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ShowUserPage()),
-                );}
-              ),
-            ],
-          ),
-        ],
+                  ]
+                ),
+              ],
+            ),
+          ],
+        ),)
       )
     );
   }
@@ -210,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
     body: StreamBuilder(
       stream: Firestore.instance.collection('users').snapshots(),
       builder: (context,snapshot){
-        if(!snapshot.hasData) return const Text("Loading...");
+        if(!snapshot.hasData) return Center(child: CircularProgressIndicator(),);
         return ListView.builder(
           itemCount:snapshot.data.documents.length,
           itemBuilder: (context,index) =>
@@ -218,17 +128,18 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddUserDialog,
+        onPressed:(){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => new AddUser()),
+          );
+        } ,
         tooltip: 'Add',
         child: Icon(Icons.add),
       ),
     );
     
   }
-
-
-
-
 }
               
 

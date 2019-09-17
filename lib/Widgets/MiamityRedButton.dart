@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MiamityGreenButton extends StatelessWidget {
-  MiamityGreenButton({this.title, this.onPressed,this.width});
+class MiamityRedButton extends StatelessWidget {
+  MiamityRedButton({this.title, this.onPressed,this.width});
 
   // Fields in a Widget subclass are always marked "final".
   final String title;
@@ -18,19 +18,19 @@ class MiamityGreenButton extends StatelessWidget {
           borderRadius:  BorderRadius.all(const Radius.circular(5.0)),
           gradient: LinearGradient(
             colors: <Color>[
-              Color(0xFF00bf3d),
-              Color(0xFF009e32),
+              Color(0xFFd10e00),
+              Color(0xFF9e0b00),
             ],
           ),
         ),
-        padding: const EdgeInsets.only(top:7,bottom:7),
+         padding: const EdgeInsets.only(top:7,bottom:7),
         width: width ?? 150,
         child: Center(
           child: Text(
             title,
             style: TextStyle(fontSize: 15)
           ),
-        )
+        ),
       ),
     );
 }
