@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
               title:"Yes!",
               width:80,
               onPressed: (){
-                //So simple :o
+                ///So simple :o
                 Firestore.instance.document("users/"+document.documentID).delete();
                 Navigator.pop(context);
               },

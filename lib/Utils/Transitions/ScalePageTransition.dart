@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Use instead of MaterialPageRoute if you want to have a different animation when changing page.
 class ScalePageTransition<T> extends MaterialPageRoute<T> {
   ScalePageTransition({ WidgetBuilder builder, RouteSettings settings })
       : super(builder: builder, settings: settings);
