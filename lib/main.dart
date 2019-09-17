@@ -57,61 +57,34 @@ class _MyHomePageState extends State<MyHomePage> {
     return  new GestureDetector(
       onTap:(){Navigator.push(context,MaterialPageRoute(builder: (context)=> ShowUserPage(document: document)));},
       child:new Card(
-        child: 
+        child:
           Container(
             padding:EdgeInsets.all(10),
             child: Column(
             children: <Widget>[
-            Row(  
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FadeInImage.memoryNetwork(
-                      height: 200,
-                      width:100,
-                      placeholder: kTransparentImage,
-                      fadeInDuration: const Duration(seconds:1),
-                      image:document["profile_picture"] ?? "",
-                    ),
-                    Padding(padding:EdgeInsets.only(right:120)),
-                  ]),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      document["firstname"]+" "+document["lastname"],
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                    Padding(padding: EdgeInsets.only(bottom: 10),),
-                    Row(
-                      children: <Widget>[
+              Wrap(
+                children: <Widget>[
+                  Row(  
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          FadeInImage.memoryNetwork(
+                            height: 130,
+                            width:150,
+                            placeholder: kTransparentImage,
+                            fadeInDuration: const Duration(seconds:1),
+                            image:document["profile_picture"] ,
+                          ),
+                          Padding(padding:EdgeInsets.only(right:170)),
+                        ]),
                         Text(
-                          "Email: ",
-                          style:TextStyle(fontWeight: FontWeight.bold)
+                          document["firstname"]+" "+document["lastname"],
+                          style: TextStyle(fontSize: 20.0),
                         ),
-                        Text(
-                          document["email"],
-                        )
-                        
-                      ],
-                      ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          "Username: ",
-                          style:TextStyle(fontWeight: FontWeight.bold)
-                        ),
-                        Text(
-                          document["username"],
-                        ),
-                      ],
-                      ),
-                  ]
-                ),
-              ],
-            ),
+                    ],
+                  ),
+                ],
+              )
           ],
         ),)
       )
