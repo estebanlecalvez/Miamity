@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:miamitymds/AddUserPage.dart';
-import 'package:miamitymds/Utils/Transitions/ScalePageTransition.dart';
-import 'Widgets/MiamityGreenButton.dart';
+import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
+import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'ShowUserPage.dart';
 void main() => runApp(MyApp());
@@ -83,12 +83,42 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                     ],
                   ),
+                  MiamityRedButton(title: 'Delete',onPressed: (){
+                    _showDialogSuppression(document);
+                  },)
                 ],
               )
           ],
         ),)
       )
     );
+  }
+  
+    void _showDialogSuppression(DocumentSnapshot document){
+      showDialog(context: context,builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Are you sure?",style: TextStyle(color: Colors.red),),
+          content: Text("This action is irreversible",style: TextStyle(color:Colors.red,fontWeight: FontWeight.bold),),
+          actions: <Widget>[
+            MiamityRedButton(
+              title:"Yes!",
+              width:80,
+              onPressed: (){
+                //So simple :o
+                Firestore.instance.document("users/"+document.documentID).delete();
+                Navigator.pop(context);
+              },
+            ),
+            MiamityGreenButton(
+              title:"Forget it!",
+              width:100,
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      });
   }
   @override
   Widget build(BuildContext context) {

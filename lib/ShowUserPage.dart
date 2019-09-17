@@ -37,6 +37,7 @@ class ShowUserPage extends StatelessWidget {
                       Text(document["email"],style:TextStyle(fontSize: 15)),
                     ],
                   ),
+
               ]
             )
           )

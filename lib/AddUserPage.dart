@@ -45,7 +45,6 @@ class _AddUserState extends State<AddUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
       body: Container(
       padding: EdgeInsets.only(top:5,right:20.0,left:20.0),
       child:ListView(
