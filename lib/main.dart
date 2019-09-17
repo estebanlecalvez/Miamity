@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:miamitymds/AddUserPage.dart';
 import 'package:miamitymds/Utils/Transitions/ScalePageTransition.dart';
 import 'Widgets/MiamityGreenButton.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'ShowUserPage.dart';
 void main() => runApp(MyApp());
 
@@ -56,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return  new GestureDetector(
       onTap:(){Navigator.push(context,MaterialPageRoute(builder: (context)=> ShowUserPage(document: document)));},
       child:new Card(
-        key: document["id"],
-          child: 
+        child: 
           Container(
             padding:EdgeInsets.all(10),
             child: Column(
@@ -67,8 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.person),
-                    Padding(padding:EdgeInsets.only(right:60)),
+                    FadeInImage.memoryNetwork(
+                      height: 200,
+                      width:100,
+                      placeholder: kTransparentImage,
+                      fadeInDuration: const Duration(seconds:1),
+                      image:document["profile_picture"] ?? "",
+                    ),
+                    Padding(padding:EdgeInsets.only(right:120)),
                   ]),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,

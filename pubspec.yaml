@@ -18,7 +18,8 @@ environment:
 
 dependencies:
   cloud_firestore:
-
+  
+  transparent_image:
   flutter:
     sdk: flutter
 
