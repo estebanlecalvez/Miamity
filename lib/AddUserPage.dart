@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'Widgets/MiamityTextField.dart';
 
@@ -38,6 +39,16 @@ class _AddUserState extends State<AddUser> {
     userPasswordConfirmationController = new TextEditingController();
     userProfilePictureController = new TextEditingController();
     super.initState();
+  }
+
+  Future<void> _requestPhotoAndCameraPermission () async{
+    PermissionStatus permissionCamera = await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
+    PermissionStatus permissionPhoto = await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
+    if(permissionCamera.value == PermissionStatus.granted && permissionPhoto.value == PermissionStatus.granted){
+      print("permission already granted");
+    }else{
+      await PermissionHandler().requestPermissions([PermissionGroup.camera,PermissionGroup.photos]);
+    }
   }
 
   @override
@@ -78,6 +89,7 @@ class _AddUserState extends State<AddUser> {
           ),
           MiamityTextField(
             text: 'Profile Picture',
+            onTapFunction: _requestPhotoAndCameraPermission,
             controller: userProfilePictureController,
           ),
           MiamityTextField(
@@ -102,14 +114,17 @@ class _AddUserState extends State<AddUser> {
             padding: EdgeInsets.only(top: 20.0),
             child: Row(
               children: <Widget>[
-                MiamityRedButton(
+                Expanded(
+                  child: MiamityRedButton(
                     title: 'Cancel',
+                    icon: Icons.cancel,
                     onPressed: () {
                       Navigator.pop(context);
                     }),
-                MiamityGreenButton(
+                ),
+                Expanded(child:MiamityGreenButton(
                     title: "Add",
-                    width: 150,
+                    icon:Icons.add,
                     onPressed: () {
                       if (userUsernameController.text.isNotEmpty &&
                           userPasswordController.text.isNotEmpty &&
@@ -119,7 +134,7 @@ class _AddUserState extends State<AddUser> {
                               userPasswordController.text) {
                         if (userProfilePictureController.text.isEmpty) {
                           userProfilePictureController.text =
-                              "https://static.thenounproject.com/png/340719-200.png";
+                          "https://static.thenounproject.com/png/340719-200.png";
                         }
                         if (userFirstnameController.text.isEmpty) {
                           userFirstnameController.text = "No";
@@ -133,29 +148,29 @@ class _AddUserState extends State<AddUser> {
                         Firestore.instance
                             .collection('users')
                             .add({
-                              "profile_picture":
-                                  userProfilePictureController.text,
-                              "firstname": userFirstnameController.text,
-                              "lastname": userLastNameController.text,
-                              "email": userEmailController.text,
-                              "phone": userPhoneController.text,
-                              "username": userUsernameController.text,
-                              "password": userPasswordController.text,
-                              "liste_plats": [],
-                              "adresse": null,
-                            })
+                          "profile_picture":
+                          userProfilePictureController.text,
+                          "firstname": userFirstnameController.text,
+                          "lastname": userLastNameController.text,
+                          "email": userEmailController.text,
+                          "phone": userPhoneController.text,
+                          "username": userUsernameController.text,
+                          "password": userPasswordController.text,
+                          "liste_plats": [],
+                          "adresse": null,
+                        })
                             .then((result) => {
-                                  Navigator.pop(context),
-                                  userEmailController.clear(),
-                                  userFirstnameController.clear(),
-                                  userLastNameController.clear(),
-                                  userPasswordConfirmationController.clear(),
-                                  userPasswordController.clear(),
-                                  userUsernameController.clear(),
-                                })
+                          Navigator.pop(context),
+                          userEmailController.clear(),
+                          userFirstnameController.clear(),
+                          userLastNameController.clear(),
+                          userPasswordConfirmationController.clear(),
+                          userPasswordController.clear(),
+                          userUsernameController.clear(),
+                        })
                             .catchError((err) => err);
                       }
-                    }),
+                    })),
               ],
             ),
           )

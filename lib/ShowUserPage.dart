@@ -34,6 +34,7 @@ class ShowUserPage extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Text("Email: ",style:TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
+                      // document.getDocumentId pour l'id <3
                       Text(document["email"],style:TextStyle(fontSize: 15)),
                     ],
                   ),

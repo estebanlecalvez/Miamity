@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 /// isPostalCode: [bool]   If this is a postal code TextField => true (limit to 5 characters)
 /// 
 /// doCorrect: [bool]   Ce widget doit il corriger automatiquement les fautes? by default : false.
+/// 
+/// onTapFunction: [Function] Permet de dire si on appel une fonction en appuyant sur le bouton ou non
 class MiamityTextField extends StatelessWidget {
   MiamityTextField(
       {this.text,
@@ -23,7 +25,8 @@ class MiamityTextField extends StatelessWidget {
       this.keyboardType,
       this.isPasswordField,
       this.isPostalCode,
-      this.doCorrect});
+      this.doCorrect,
+      this.onTapFunction});
 
   
   final String text;
@@ -33,6 +36,7 @@ class MiamityTextField extends StatelessWidget {
   final bool isPasswordField;
   final bool isPostalCode;
   final bool doCorrect;
+  final Function onTapFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,7 @@ class MiamityTextField extends StatelessWidget {
                 fontWeight: FontWeight.w600)),
         keyboardType: keyboardType,
         controller: controller,
+        onTap: onTapFunction ?? null,
         autocorrect: doCorrect ?? false,
         obscureText: isPasswordField ?? false);
   }

@@ -65,25 +65,30 @@ class _MyHomePageState extends State<MyHomePage> {
               Wrap(
                 children: <Widget>[
                   Row(  
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Column(
                         children: <Widget>[
                           FadeInImage.memoryNetwork(
                             height: 130,
-                            width:150,
+                            width:120,
                             placeholder: kTransparentImage,
                             fadeInDuration: const Duration(seconds:1),
                             image:document["profile_picture"] ,
                           ),
-                          Padding(padding:EdgeInsets.only(right:170)),
                         ]),
-                        Text(
-                          document["firstname"]+" "+document["lastname"],
-                          style: TextStyle(fontSize: 20.0),
+                        Container(
+                          child: Text(
+                            document["firstname"]+" "+document["lastname"],
+                            style: TextStyle(fontSize: 20.0),
+                          ),
                         ),
                     ],
                   ),
-                  MiamityRedButton(title: 'Delete',onPressed: (){
+                  MiamityRedButton(
+                    title: 'Delete',
+                    width:100,
+                    onPressed: (){
                     _showDialogSuppression(document);
                   },)
                 ],

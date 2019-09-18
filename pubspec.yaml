@@ -18,8 +18,8 @@ environment:
 
 dependencies:
   cloud_firestore:
-  
   transparent_image:
+  permission_handler:
   flutter:
     sdk: flutter
 
