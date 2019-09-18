@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+
+/// Classical MiamityButton which is green (Everything's fine!) , you can define a title, a onPressed function and a width (by default 150)
 class MiamityGreenButton extends StatelessWidget {
   MiamityGreenButton({this.title, this.onPressed,this.width});
 
-  // Fields in a Widget subclass are always marked "final".
   final String title;
   final Function onPressed;
   final double width;

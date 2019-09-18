@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Classical MiamityButton which is red (Cancel), you can define a title, a onPressed function and a width (by default 150)
 class MiamityRedButton extends StatelessWidget {
   MiamityRedButton({this.title, this.onPressed,this.width});
 
