@@ -32,7 +32,11 @@ class MiamityGreenButton extends StatelessWidget {
             children: <Widget>[
               icon != null? Icon(icon) : Text(""),
               Text(
-                  icon !=null? " "+title ?? "": title ??"",
+                  title !=null? 
+                    icon!= null ?
+                      " "+ title : 
+                    title :
+                  "",
                   style: TextStyle(fontSize: 15)
               ),
             ],
