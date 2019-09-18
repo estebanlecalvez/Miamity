@@ -8,6 +8,7 @@ import 'Widgets/MiamityTextField.dart';
 
 class AddUser extends StatefulWidget {
   AddUser({Key key, this.title}) : super(key: key);
+  static const String routeName = "/addUser";
   final String title;
 
   @override
