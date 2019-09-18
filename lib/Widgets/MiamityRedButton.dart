@@ -28,13 +28,16 @@ class MiamityRedButton extends StatelessWidget {
         width: width ?? 150,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-
             children: <Widget>[
               icon != null? Icon(icon) : Text(""),
               Text(
-                 icon !=null? " "+title ?? "": title ??"",
-                style: TextStyle(fontSize: 15)
-            ),
+                  title !=null? 
+                    icon!= null ?
+                      " "+ title : 
+                    title :
+                  "",
+                  style: TextStyle(fontSize: 15)
+              ),
             ],
           )
         ),

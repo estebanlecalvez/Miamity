@@ -20,7 +20,8 @@ dependencies:
   cloud_firestore:
   transparent_image:
   permission_handler:
-  file_picker: ^1.4.1
+  firebase_storage: ^3.0.6
+  image_picker:
   flutter:
     sdk: flutter
 
