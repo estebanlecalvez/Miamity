@@ -14,33 +14,87 @@ class WhatIsNearMePage extends StatefulWidget {
 class WhatIsNearMePageState extends State<WhatIsNearMePage> {
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  Widget _listDishes() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Container(
+          margin: EdgeInsets.symmetric(vertical: 20.0),
+          height: 150.0,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              ),
+               SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              ),
+               SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              ),
+               SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              ),
+               SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              ),
+               SizedBox(width: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
+              )
+            ],
+          )),
+    );
+  }
 
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  Widget _googleMap() {
+    final CameraPosition _kGooglePlex = CameraPosition(
+      target: LatLng(48.1185897, -1.6211725),
+      zoom: 14.4746,
+    );
+
+    Marker rennesMarker = Marker(
+        position: LatLng(48.1185897, -1.6211725),
+        markerId: MarkerId("rennesMarker"),
+        infoWindow: InfoWindow(title: "Rennes"));
+
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.height,
+        child: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _kGooglePlex,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+          markers: {
+            rennesMarker,
+          },
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: AppBar(title: Text("Maps"),),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),
-    );
-  }
-
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+        appBar: AppBar(
+          title: Text("Maps"),
+        ),
+        body: Stack(
+          children: <Widget>[
+            _googleMap(),
+            _listDishes(),
+          ],
+        ));
   }
 }
