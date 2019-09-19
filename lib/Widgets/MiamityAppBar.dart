@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/userListPage.dart';
 import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
@@ -31,7 +32,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
             Navigator.pop(context);
             Navigator.push(
               context,
-              NoPageTransition(builder: (context) => route),
+              MaterialPageRoute(builder: (context) => route),
             );
           });
         },
@@ -39,11 +40,16 @@ class MiamityAppBarState extends State<MiamityAppBar> {
     }
 
     var myNavChildren = [
+      DrawerHeader(
+        child: CircleAvatar(child: Icon(Icons.restaurant,color: Colors.orange,),),
+        decoration: BoxDecoration(color: Colors.green),
+      ),
       // getNavItem(Icons.settings, "Settings", SettingsScreen.routeName),
       getNavItem(Icons.home, "Accueil", HomeScreen()),
       // getNavItem(Icons.restaurant, "Ajouter un plat", "/addPlate"),
       // getNavItem(Icons.restaurant, "Historique",),
-      getNavItem(Icons.restaurant, "Liste des utilisateurs", UserList()),
+      getNavItem(Icons.person, "Liste des utilisateurs", UserList()),
+      getNavItem(Icons.map, "Plats proche de moi", WhatIsNearMePage()),
       // getNavItem(Icons.account_box, "Account", AccountScreen.routeName),
       aboutChild
     ];
