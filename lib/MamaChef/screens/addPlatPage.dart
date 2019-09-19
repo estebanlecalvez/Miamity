@@ -5,7 +5,7 @@ import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 
 import '../../Widgets/MiamityTextField.dart';
 
-class AddPlate extends StateFullWidget {
+class AddPlate extends StatefulWidget {
   AddPlate({Key key, this.title}) : super(key: key);
   static const String routeName = "/addPlate";
   final String title;
