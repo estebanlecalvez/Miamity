@@ -10,6 +10,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="miamitymds"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Google maps integration -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg"/>        
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -24,6 +29,7 @@
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
