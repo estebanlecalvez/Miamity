@@ -12,20 +12,14 @@ class MiamityRedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
+      color: Colors.red[600],
       onPressed: onPressed,
       textColor: Colors.white,
       child: Container(
-        decoration: const BoxDecoration(
-          borderRadius:  BorderRadius.all(const Radius.circular(30.0)),
-          gradient: LinearGradient(
-            colors: <Color>[
-              Color(0xFFd10e00),
-              Color(0xFF9e0b00),
-            ],
+          decoration: const BoxDecoration(
+            borderRadius:  BorderRadius.all(const Radius.circular(50.0)),
           ),
-        ),
-        padding: const EdgeInsets.only(top:7,bottom:7),
-        width: width ?? 150,
+          padding: const EdgeInsets.only(top:7,bottom:7),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -40,8 +34,7 @@ class MiamityRedButton extends StatelessWidget {
               ),
             ],
           )
-        ),
+      ),
     );
-
 }
 }

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
+import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import './MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/userListPage.dart';
 import 'package:miamitymds/MamaChef/screens/AddUserPage.dart';
 // import './MamaChef/screens/AddPlatePage.dart';
+
+
+const kGoogleApiKey = "AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg";
+
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 void main() => runApp(MyApp());
 
@@ -20,6 +27,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         UserList.routeName: (BuildContext context) => UserList(),
         AddUser.routeName: (BuildContext context) => AddUser(),
+        AddPlate.routeName : (BuildContext context) => AddPlate(),
         WhatIsNearMePage.routeName:(BuildContext context)=> WhatIsNearMePage(),
       },
     );
