@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
+import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import './MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/userListPage.dart';
 import 'package:miamitymds/MamaChef/screens/AddUserPage.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         UserList.routeName: (BuildContext context) => UserList(),
         AddUser.routeName: (BuildContext context) => AddUser(),
+        AddPlate.routeName : (BuildContext context) => AddPlate(),
         WhatIsNearMePage.routeName:(BuildContext context)=> WhatIsNearMePage(),
       },
     );

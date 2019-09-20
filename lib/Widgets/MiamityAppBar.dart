@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
+import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/userListPage.dart';
 import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
@@ -46,7 +47,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
       ),
       // getNavItem(Icons.settings, "Settings", SettingsScreen.routeName),
       getNavItem(Icons.home, "Accueil", HomeScreen()),
-      // getNavItem(Icons.restaurant, "Ajouter un plat", "/addPlate"),
+      getNavItem(Icons.restaurant, "Ajouter un plat", AddPlate(title: 'Ajouter un plat',)),
       // getNavItem(Icons.restaurant, "Historique",),
       getNavItem(Icons.person, "Liste des utilisateurs", UserList()),
       getNavItem(Icons.map, "Plats proche de moi", WhatIsNearMePage()),
