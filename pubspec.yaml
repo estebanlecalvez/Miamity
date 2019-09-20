@@ -23,8 +23,11 @@ dependencies:
   firebase_storage: ^3.0.6
   image_picker:
   google_maps_flutter:
+  google_maps_webservice:
   flutter_form_builder:
   intl:
+  flutter_google_places: 
+  geocoder:
   flutter:
     sdk: flutter
 

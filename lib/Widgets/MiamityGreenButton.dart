@@ -13,20 +13,14 @@ class MiamityGreenButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
+      color: Colors.green,
       onPressed: onPressed,
       textColor: Colors.white,
       child: Container(
           decoration: const BoxDecoration(
-            borderRadius:  BorderRadius.all(const Radius.circular(30.0)),
-            gradient: LinearGradient(
-              colors: <Color>[
-                Color(0xFF00bf3d),
-                Color(0xFF009e32),
-              ],
-            ),
+            borderRadius:  BorderRadius.all(const Radius.circular(50.0)),
           ),
           padding: const EdgeInsets.only(top:7,bottom:7),
-          width: width ?? 150,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
