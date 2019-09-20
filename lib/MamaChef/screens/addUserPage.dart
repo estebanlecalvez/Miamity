@@ -4,13 +4,20 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:miamitymds/CommonPages/SelectAddressPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
+import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:miamitymds/Widgets/MiamityTextField.dart';
 import 'package:image_picker/image_picker.dart';
+
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 final StorageReference storageReference = FirebaseStorage().ref();
 
@@ -38,7 +45,11 @@ class _AddUserState extends State<AddUser> {
   TextEditingController userCountryController;
   String imageURL;
   File sampleImage;
-  bool waitingForUploadImage = false;
+  bool waitingForUploadImage;
+  String selectedAddress;
+  bool isAddressSelected;
+  double longitude;
+  double latitude;
 
   @override
   initState() {
@@ -49,6 +60,11 @@ class _AddUserState extends State<AddUser> {
     userPasswordController = new TextEditingController();
     userPhoneController = new TextEditingController();
     userPasswordConfirmationController = new TextEditingController();
+    imageURL = "";
+    waitingForUploadImage = false;
+    isAddressSelected = false;
+    longitude = null;
+    latitude = null;
     super.initState();
   }
 
@@ -93,184 +109,216 @@ class _AddUserState extends State<AddUser> {
     } else {}
   }
 
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+
+      var placeId = p.placeId;
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+
+      setState(() {
+        this.selectedAddress = address[0].addressLine;
+        this.isAddressSelected = true;
+        this.latitude = lat;
+        this.longitude = lng;
+      });
+      print(this.latitude);
+      print(this.longitude);
+      print("isAdressSelected: " + this.isAddressSelected.toString());
+      print(this.selectedAddress);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Ajouter un utilisateur"),
-      ),
-      body: PageView(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top:10,right:20,left:20),
-            child: ListView(
-              children: <Widget>[
-                Text(
-                  "Add user",
-                  style: TextStyle(fontSize: 25.0, color: Colors.green),
-                ),
-                MiamityTextField(
-                    text: "Firstname", controller: userFirstnameController),
-                MiamityTextField(
-                    text: "Lastname", controller: userLastNameController),
-                MiamityTextField(
-                    text: 'Phone',
-                    keyboardType: TextInputType.phone,
-                    controller: userPhoneController),
-                MiamityTextField(
-                    text: 'Email*',
-                    keyboardType: TextInputType.emailAddress,
-                    controller: userEmailController),
-                MiamityTextField(
-                    text: 'Username*', controller: userUsernameController),
-                MiamityTextField(
-                    text: 'Password*',
-                    controller: userPasswordController,
+        appBar: AppBar(
+          title: Text("Ajouter un utilisateur"),
+        ),
+        body: PageView(children: <Widget>[
+          ListView(
+            children: <Widget>[
+              Text(
+                "Ajouter un utilisateur",
+                style: TextStyle(fontSize: 20.0, color: Colors.green),
+              ),
+              Column(
+                children: <Widget>[
+                  MiamityTextField(
+                      text: "Firstname", controller: userFirstnameController),
+                  MiamityTextField(
+                      text: "Lastname", controller: userLastNameController),
+                  MiamityTextField(
+                      text: 'Phone',
+                      keyboardType: TextInputType.phone,
+                      controller: userPhoneController),
+                  MiamityTextField(
+                      text: 'Email*',
+                      keyboardType: TextInputType.emailAddress,
+                      controller: userEmailController),
+                  MiamityTextField(
+                      text: 'Username*', controller: userUsernameController),
+                  MiamityTextField(
+                      text: 'Password*',
+                      controller: userPasswordController,
+                      keyboardType: TextInputType.visiblePassword,
+                      isPasswordField: true),
+                  MiamityTextField(
+                    text: 'Password confirmation*',
+                    controller: userPasswordConfirmationController,
                     keyboardType: TextInputType.visiblePassword,
-                    isPasswordField: true),
-                MiamityTextField(
-                  text: 'Password confirmation*',
-                  controller: userPasswordConfirmationController,
-                  keyboardType: TextInputType.visiblePassword,
-                  isPasswordField: true,
-                ),
-                MiamityTextField(
-                  text: 'Address',
-                  controller: userAddressController,
-                ),
-                MiamityTextField(
-                  text: 'Country',
-                  controller: userCountryController,
-                ),
-                MiamityTextField(
-                  text: 'City',
-                  controller: userCityController,
-                ),
-                MiamityTextField(
-                  text: 'Postal Code',
-                  keyboardType: TextInputType.number,
-                  isPostalCode: true,
-                  controller: userPostalCodeController,
-                ),
-                Container(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Row(
+                    isPasswordField: true,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                  )
+                ],
+              ),
+              isAddressSelected
+                  ? Wrap(
                       children: <Widget>[
-                        sampleImage == null
-                            ? Expanded(
-                                child: MiamityGreenButton(
-                                    width: 200,
-                                    icon: Icons.file_download,
-                                    title: "Je choisis mon image",
+                        MiamityTextField(
+                            text: selectedAddress,
+                            isReadOnly: true,
+                            onTapFunction: () async {
+                              Prediction p = await PlacesAutocomplete.show(
+                                  context: context, apiKey: kGoogleApiKey);
+                              displayPrediction(p);
+                            }),
+                        MiamityButton(
+                            btnColor: Colors.orange[700],
+                            title: "CHANGER L'ADRESSE",
+                            onPressed: () async {
+                              setState(() {
+                                selectedAddress = null;
+                                isAddressSelected = false;
+                              });
+                              Prediction p = await PlacesAutocomplete.show(
+                                  context: context, apiKey: kGoogleApiKey);
+                              displayPrediction(p);
+                            })
+                      ],
+                    )
+                  : MiamityButton(
+                      btnColor: Colors.blue,
+                      title: "JE SELECTIONNE MON ADRESSE",
+                      onPressed: () async {
+                        // show input autocomplete with selected mode
+                        // then get the Prediction selected
+                        Prediction p = await PlacesAutocomplete.show(
+                            context: context, apiKey: kGoogleApiKey);
+                        displayPrediction(p);
+                      }),
+              Container(
+                  child: Row(
+                children: <Widget>[
+                  sampleImage == null
+                      ? Expanded(
+                          child: MiamityButton(
+                              btnColor: Colors.blue,
+                              title: "JE SELECTIONNE MA PHOTO DE PROFIL",
+                              onPressed: () {
+                                getImage();
+                              }))
+                      : Row(
+                          children: <Widget>[
+                            Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: Image.file(sampleImage,
+                                    height: 100, width: 100)),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                MiamityGreenButton(
+                                    title: "CHANGER",
                                     onPressed: () {
                                       getImage();
-                                    }))
-                            : (Row(
-                                children: <Widget>[
-                                  Image.file(sampleImage,
-                                      height: 100, width: 100),
-                                  MiamityGreenButton(
-                                      icon: Icons.file_download,
-                                      width: 40,
-                                      onPressed: () {
-                                        getImage();
-                                      }),
-                                  MiamityRedButton(
-                                      icon: Icons.cancel,
-                                      width: 40,
-                                      onPressed: () {
-                                        setState(() {
-                                          sampleImage = null;
-                                        });
-                                      }),
-                                ],
-                              )),
-                      ],
-                    )),
-                Container(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: MiamityRedButton(
-                            title: 'Cancel',
-                            icon: Icons.cancel,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                      ),
-                      waitingForUploadImage
-                          ? CircularProgressIndicator()
-                          : Expanded(
-                              child: MiamityGreenButton(
-                                  title: "Add",
-                                  icon: Icons.add,
-                                  onPressed: () async {
-                                    if (userUsernameController.text.isNotEmpty &&
-                                        userPasswordController
-                                            .text.isNotEmpty &&
-                                        userEmailController.text.isNotEmpty &&
-                                        userPasswordConfirmationController
-                                            .text.isNotEmpty &&
-                                        userPasswordConfirmationController
-                                                .text ==
-                                            userPasswordController.text) {
+                                    }),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.0)),
+                                MiamityRedButton(
+                                    title: "SUPPRIMER",
+                                    onPressed: () {
                                       setState(() {
-                                        waitingForUploadImage = true;
+                                        sampleImage = null;
                                       });
-                                      await uploadImage();
-                                      if (imageURL == null) {
-                                        imageURL =
-                                            "https://static.thenounproject.com/png/340719-200.png";
-                                      }
-                                      if (userFirstnameController
-                                          .text.isEmpty) {
-                                        userFirstnameController.text = "No";
-                                      }
-                                      if (userLastNameController.text.isEmpty) {
-                                        userLastNameController.text = "name";
-                                      }
-                                      if (userPhoneController.text.isEmpty) {
-                                        userPhoneController.text = null;
-                                      }
-                                      Firestore.instance
-                                          .collection('users')
-                                          .add({
-                                            "profile_picture": imageURL,
-                                            "firstname":
-                                                userFirstnameController.text,
-                                            "lastname":
-                                                userLastNameController.text,
-                                            "email": userEmailController.text,
-                                            "phone": userPhoneController.text,
-                                            "username":
-                                                userUsernameController.text,
-                                            "password":
-                                                userPasswordController.text,
-                                            "liste_plats": [],
-                                            "adresse": null,
+                                    }),
+                              ],
+                            ),
+                          ],
+                        )
+                ],
+              )),
+              Row(
+                children: <Widget>[
+                  waitingForUploadImage
+                      ? Center(child:CircularProgressIndicator())
+                      : Expanded(
+                          child: MiamityButton(
+                              title: "TERMINER L'INSCRIPTION",
+                              onPressed: () async {
+                                if (userUsernameController.text.isNotEmpty &&
+                                    userPasswordController.text.isNotEmpty &&
+                                    userEmailController.text.isNotEmpty &&
+                                    userPasswordConfirmationController
+                                        .text.isNotEmpty &&
+                                    userPasswordConfirmationController.text ==
+                                        userPasswordController.text) {
+                                  setState(() {
+                                    waitingForUploadImage = true;
+                                  });
+                                  await uploadImage();
+                                  if (imageURL == null) {
+                                    imageURL =
+                                        "https://static.thenounproject.com/png/340719-200.png";
+                                  }
+                                  if (userFirstnameController.text.isEmpty) {
+                                    userFirstnameController.text = "No";
+                                  }
+                                  if (userLastNameController.text.isEmpty) {
+                                    userLastNameController.text = "name";
+                                  }
+                                  if (userPhoneController.text.isEmpty) {
+                                    userPhoneController.text = null;
+                                  }
+                                  Firestore.instance
+                                      .collection('users')
+                                      .add({
+                                        "profile_picture": imageURL,
+                                        "firstname":
+                                            userFirstnameController.text,
+                                        "lastname": userLastNameController.text,
+                                        "email": userEmailController.text,
+                                        "phone": userPhoneController.text,
+                                        "username": userUsernameController.text,
+                                        "password": userPasswordController.text,
+                                        "liste_plats": [],
+                                        "address": selectedAddress,
+                                        "latitude": latitude,
+                                        "longitude": longitude,
+                                      })
+                                      .then((result) => {
+                                            Navigator.pop(context),
+                                            userEmailController.clear(),
+                                            userFirstnameController.clear(),
+                                            userLastNameController.clear(),
+                                            userPasswordConfirmationController
+                                                .clear(),
+                                            userPasswordController.clear(),
+                                            userUsernameController.clear(),
                                           })
-                                          .then((result) => {
-                                                Navigator.pop(context),
-                                                userEmailController.clear(),
-                                                userFirstnameController.clear(),
-                                                userLastNameController.clear(),
-                                                userPasswordConfirmationController
-                                                    .clear(),
-                                                userPasswordController.clear(),
-                                                userUsernameController.clear(),
-                                              })
-                                          .catchError((err) => err);
-                                    }
-                                  })),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                                      .catchError((err) => err);
+                                }
+                              })),
+                ],
+              ),
+            ],
+          ),
+        ]));
   }
 }
