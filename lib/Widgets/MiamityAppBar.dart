@@ -3,8 +3,6 @@ import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/userListPage.dart';
-import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
-import 'package:miamitymds/Utils/Transitions/ScalePageTransition.dart';
 
 class MiamityAppBar extends StatefulWidget {
   MiamityAppBar({Key key, this.title}) : super(key: key);

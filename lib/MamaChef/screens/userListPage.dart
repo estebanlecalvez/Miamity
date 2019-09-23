@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:miamitymds/MamaChef/screens/AddUserPage.dart';
+import 'package:miamitymds/CommonPages/RegisterPage.dart';
 import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
@@ -131,7 +131,7 @@ class _UserListState extends State<UserList> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => new AddUser()),
+            MaterialPageRoute(builder: (context) => new RegisterPage()),
           );
         },
         tooltip: 'Add',

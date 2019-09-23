@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:miamitymds/CommonPages/SelectAddressPage.dart';
-import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
@@ -17,20 +15,21 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:miamitymds/Widgets/MiamityTextField.dart';
 import 'package:image_picker/image_picker.dart';
 
+const kGoogleApiKey = "AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 final StorageReference storageReference = FirebaseStorage().ref();
 
-class AddUser extends StatefulWidget {
-  AddUser({Key key, this.title}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  RegisterPage({Key key, this.title}) : super(key: key);
   static const String routeName = "/addUser";
   final String title;
 
   @override
-  _AddUserState createState() => _AddUserState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _AddUserState extends State<AddUser> {
+class _RegisterPageState extends State<RegisterPage> {
   TextEditingController userFirstnameController;
   TextEditingController userLastNameController;
   TextEditingController userEmailController;
@@ -69,6 +68,7 @@ class _AddUserState extends State<AddUser> {
   }
 
   Future getImage() async {
+    _openFileExplorer();
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
@@ -82,8 +82,8 @@ class _AddUserState extends State<AddUser> {
         await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
     PermissionStatus permissionPhoto =
         await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
-    if (permissionCamera.value == PermissionStatus.granted &&
-        permissionPhoto.value == PermissionStatus.granted) {
+    if (permissionCamera.value.toString() == PermissionStatus.granted.toString() &&
+        permissionPhoto.value.toString() == PermissionStatus.granted.toString()) {
       print("permission already granted");
     } else {
       await PermissionHandler()
@@ -114,7 +114,7 @@ class _AddUserState extends State<AddUser> {
       PlacesDetailsResponse detail =
           await _places.getDetailsByPlaceId(p.placeId);
 
-      var placeId = p.placeId;
+      // var placeId = p.placeId;
       double lat = detail.result.geometry.location.lat;
       double lng = detail.result.geometry.location.lng;
 

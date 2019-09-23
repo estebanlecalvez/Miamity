@@ -20,7 +20,7 @@ dependencies:
   cloud_firestore:
   transparent_image:
   permission_handler:
-  firebase_storage: ^3.0.6
+  firebase_storage:
   image_picker:
   google_maps_flutter:
   google_maps_webservice:
@@ -28,6 +28,7 @@ dependencies:
   intl:
   flutter_google_places: 
   geocoder:
+  firebase_auth:
   flutter:
     sdk: flutter
 
