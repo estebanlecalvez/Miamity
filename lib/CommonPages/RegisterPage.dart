@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
+import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:miamitymds/Widgets/MiamityTextField.dart';
@@ -30,18 +32,14 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController userFirstnameController;
-  TextEditingController userLastNameController;
-  TextEditingController userEmailController;
-  TextEditingController userUsernameController;
-  TextEditingController userPasswordController;
-  TextEditingController userPhoneController;
-  TextEditingController userPasswordConfirmationController;
-  TextEditingController userProfilePictureController;
-  TextEditingController userAddressController;
-  TextEditingController userCityController;
-  TextEditingController userPostalCodeController;
-  TextEditingController userCountryController;
+  final _formKey = GlobalKey<FormState>();
+  String _userFirstname;
+  String _userLastname;
+  String _userEmail;
+  String _userUsername;
+  String _userPassword;
+  String _userPhone;
+  String _userPasswordConfirmation;
   String imageURL;
   File sampleImage;
   bool waitingForUploadImage;
@@ -49,21 +47,16 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isAddressSelected;
   double longitude;
   double latitude;
+  String _errorMessage;
 
   @override
   initState() {
-    userFirstnameController = new TextEditingController();
-    userLastNameController = new TextEditingController();
-    userEmailController = new TextEditingController();
-    userUsernameController = new TextEditingController();
-    userPasswordController = new TextEditingController();
-    userPhoneController = new TextEditingController();
-    userPasswordConfirmationController = new TextEditingController();
     imageURL = "";
     waitingForUploadImage = false;
     isAddressSelected = false;
     longitude = null;
     latitude = null;
+    _errorMessage = "";
     super.initState();
   }
 
@@ -76,14 +69,26 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  bool validateAndSave() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void _openFileExplorer() async {
     ///Check si les permissions ont été données. Sinon les demande.
     PermissionStatus permissionCamera =
         await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
     PermissionStatus permissionPhoto =
         await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
-    if (permissionCamera.value.toString() == PermissionStatus.granted.toString() &&
-        permissionPhoto.value.toString() == PermissionStatus.granted.toString()) {
+    if (permissionCamera.value.toString() ==
+            PermissionStatus.granted.toString() &&
+        permissionPhoto.value.toString() ==
+            PermissionStatus.granted.toString()) {
       print("permission already granted");
     } else {
       await PermissionHandler()
@@ -95,12 +100,18 @@ class _RegisterPageState extends State<RegisterPage> {
     if (sampleImage == null) {
       return;
     }
+    setState(() {
+      waitingForUploadImage = true;
+    });
     final StorageReference firebaseStorageRef = FirebaseStorage.instance
         .ref()
         .child(Random().nextInt(10000000).toString() + ".jpg");
     final StorageUploadTask task = firebaseStorageRef.putFile(sampleImage);
     final StorageTaskSnapshot taskSnapshot = (await task.onComplete);
     imageURL = await taskSnapshot.ref.getDownloadURL();
+    setState(() {
+      waitingForUploadImage = false;
+    });
   }
 
   wait() {
@@ -126,10 +137,94 @@ class _RegisterPageState extends State<RegisterPage> {
         this.latitude = lat;
         this.longitude = lng;
       });
-      print(this.latitude);
-      print(this.longitude);
-      print("isAdressSelected: " + this.isAddressSelected.toString());
-      print(this.selectedAddress);
+    }
+  }
+
+  _storeDataToFirebaseAuthentication() async {
+    final FirebaseUser user =
+        (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _userEmail,
+      password: _userPassword,
+    ))
+            .user;
+  }
+
+  _storeDataToFirestore() async {
+    Firestore.instance
+        .collection('users')
+        .add({
+          "profile_picture": imageURL,
+          "firstname": _userFirstname,
+          "lastname": _userLastname,
+          "email": _userEmail,
+          "phone": _userPhone,
+          "username": _userUsername,
+          "password": _userPassword,
+          "liste_plats": [],
+          "address": selectedAddress,
+          "latitude": latitude,
+          "longitude": longitude,
+        })
+        .then((result) => {
+              Navigator.pop(context),
+            })
+        .catchError((err) => err);
+  }
+
+  bool _isAllOk() {
+    bool result = false;
+    if (isAddressSelected) {
+      result = true;
+    }
+    return result;
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (value.isEmpty) {
+      return 'Veuillez entrer une adresse email';
+    }
+    if (!regex.hasMatch(value))
+      return 'Entrez un email valide';
+    else
+      return null;
+  }
+
+  String validateMobile(String value) {
+// Indian Mobile number are of 10 digit only
+    if (value.length != 10)
+      return 'Mobile Number must be of 10 digit';
+    else
+      return null;
+  }
+
+  sendForm() async {
+    //Si tous les champs mandatory sont renseignés.
+    if (validateAndSave()) {
+      //Si on a selectionner une adresse (essentiel pour la creation d'un compte.)
+      if (isAddressSelected) {
+        uploadImage();
+        if (imageURL == null) {
+          imageURL = "https://static.thenounproject.com/png/340719-200.png";
+        }
+        if (_userFirstname.isEmpty) {
+          _userFirstname = "No";
+        }
+        if (_userLastname.isEmpty) {
+          _userLastname = "name";
+        }
+        try {
+          await _storeDataToFirebaseAuthentication();
+          await _storeDataToFirestore();
+        } catch (e) {
+          setState(() {
+            _errorMessage = e.code;
+          });
+          print(_errorMessage);
+        }
+      }
     }
   }
 
@@ -146,37 +241,53 @@ class _RegisterPageState extends State<RegisterPage> {
                 "Ajouter un utilisateur",
                 style: TextStyle(fontSize: 20.0, color: Colors.green),
               ),
-              Column(
-                children: <Widget>[
-                  MiamityTextField(
-                      text: "Firstname", controller: userFirstnameController),
-                  MiamityTextField(
-                      text: "Lastname", controller: userLastNameController),
-                  MiamityTextField(
-                      text: 'Phone',
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    MiamityTextFormField(
+                        label: "Firstname",
+                        onSaved: (value) => _userFirstname = value),
+                    MiamityTextFormField(
+                        label: "Lastname",
+                        onSaved: (value) => _userLastname = value),
+                    MiamityTextFormField(
+                      label: 'Phone',
                       keyboardType: TextInputType.phone,
-                      controller: userPhoneController),
-                  MiamityTextField(
-                      text: 'Email*',
-                      keyboardType: TextInputType.emailAddress,
-                      controller: userEmailController),
-                  MiamityTextField(
-                      text: 'Username*', controller: userUsernameController),
-                  MiamityTextField(
-                      text: 'Password*',
-                      controller: userPasswordController,
+                      onSaved: (value) => _userPhone = value,
+                    ),
+                    MiamityTextFormField(
+                        label: 'Email*',
+                        keyboardType: TextInputType.emailAddress,
+                        validator: validateEmail,
+                        onSaved: (value) => _userEmail = value),
+                    MiamityTextFormField(
+                        label: 'Username*',
+                        validator: (String value) => value.isEmpty
+                            ? 'Vous devez entrer un nom d\'utilisateur.'
+                            : null,
+                        onSaved: (value) => _userUsername = value),
+                    MiamityTextFormField(
+                        label: 'Password*',
+                        keyboardType: TextInputType.visiblePassword,
+                        isObscureText: true,
+                        validator: (String value) => value.isEmpty
+                            ? 'Vous devez entrer un mot de passe.'
+                            : null,
+                        onSaved: (value) => _userPassword = value),
+                    MiamityTextFormField(
+                      label: 'Password confirmation*',
                       keyboardType: TextInputType.visiblePassword,
-                      isPasswordField: true),
-                  MiamityTextField(
-                    text: 'Password confirmation*',
-                    controller: userPasswordConfirmationController,
-                    keyboardType: TextInputType.visiblePassword,
-                    isPasswordField: true,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                  )
-                ],
+                      isObscureText: true,
+                      validator: (String value) => value.isEmpty
+                          ? 'Vous devez confirmer votre mot de passe'
+                          : null,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                    )
+                  ],
+                ),
               ),
               isAddressSelected
                   ? Wrap(
@@ -257,64 +368,15 @@ class _RegisterPageState extends State<RegisterPage> {
               Row(
                 children: <Widget>[
                   waitingForUploadImage
-                      ? Center(child:CircularProgressIndicator())
+                      ? Center(child: CircularProgressIndicator())
                       : Expanded(
-                          child: MiamityButton(
-                              title: "TERMINER L'INSCRIPTION",
-                              onPressed: () async {
-                                if (userUsernameController.text.isNotEmpty &&
-                                    userPasswordController.text.isNotEmpty &&
-                                    userEmailController.text.isNotEmpty &&
-                                    userPasswordConfirmationController
-                                        .text.isNotEmpty &&
-                                    userPasswordConfirmationController.text ==
-                                        userPasswordController.text) {
-                                  setState(() {
-                                    waitingForUploadImage = true;
-                                  });
-                                  await uploadImage();
-                                  if (imageURL == null) {
-                                    imageURL =
-                                        "https://static.thenounproject.com/png/340719-200.png";
-                                  }
-                                  if (userFirstnameController.text.isEmpty) {
-                                    userFirstnameController.text = "No";
-                                  }
-                                  if (userLastNameController.text.isEmpty) {
-                                    userLastNameController.text = "name";
-                                  }
-                                  if (userPhoneController.text.isEmpty) {
-                                    userPhoneController.text = null;
-                                  }
-                                  Firestore.instance
-                                      .collection('users')
-                                      .add({
-                                        "profile_picture": imageURL,
-                                        "firstname":
-                                            userFirstnameController.text,
-                                        "lastname": userLastNameController.text,
-                                        "email": userEmailController.text,
-                                        "phone": userPhoneController.text,
-                                        "username": userUsernameController.text,
-                                        "password": userPasswordController.text,
-                                        "liste_plats": [],
-                                        "address": selectedAddress,
-                                        "latitude": latitude,
-                                        "longitude": longitude,
-                                      })
-                                      .then((result) => {
-                                            Navigator.pop(context),
-                                            userEmailController.clear(),
-                                            userFirstnameController.clear(),
-                                            userLastNameController.clear(),
-                                            userPasswordConfirmationController
-                                                .clear(),
-                                            userPasswordController.clear(),
-                                            userUsernameController.clear(),
-                                          })
-                                      .catchError((err) => err);
-                                }
-                              })),
+                          child: _isAllOk()
+                              ? MiamityButton(
+                                  title: "TERMINER L'INSCRIPTION",
+                                  onPressed: () {
+                                    sendForm();
+                                  })
+                              : MiamityButton(title: "TERMINER L'INSCRIPTION")),
                 ],
               ),
             ],

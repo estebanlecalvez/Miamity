@@ -4,6 +4,7 @@ import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -90,42 +91,29 @@ class _LoginPageState extends State<LoginPage> {
           key: formKey,
           child: Column(
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10.0),
-                child: Wrap(
-                  children: <Widget>[
-                    new TextFormField(
-                      controller: _email,
-                      decoration: new InputDecoration(labelText: "Email"),
-                      validator: (String value) => value.isEmpty
-                          ? 'Vous devez entrer votre Email'
-                          : null,
-                      onSaved: (value) => _email.text = value,
-                    ),
-                    new TextFormField(
-                      controller: _password,
-                      decoration:
-                          new InputDecoration(labelText: "Mot de passe"),
-                      validator: (String value) => value.isEmpty
-                          ? 'Vous devez entrer votre mot de passe'
-                          : null,
-                      onSaved: (value) => _password.text = value,
-                      obscureText: true,
-                    ),
-                    _smthngIsWrong
-                        ? Text(_errorMessage,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0))
-                        : Text("C'est ok mon gros",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0)),
-                  ],
-                ),
+              new MiamityTextFormField(
+                controller: _email,
+                label: "Email",
+                validator: (String value) =>
+                    value.isEmpty ? 'Vous devez entrer votre Email' : null,
+                onSaved: (value) => _email.text = value,
               ),
+              new MiamityTextFormField(
+                controller: _password,
+                label: "Mot de passe",
+                validator: (String value) => value.isEmpty
+                    ? 'Vous devez entrer votre mot de passe'
+                    : null,
+                onSaved: (value) => _password.text = value,
+                isObscureText: true,
+              ),
+              _smthngIsWrong
+                  ? Text(_errorMessage,
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0))
+                  : Text(""),
               FlatButton(
                 child: Text("Vous n'avez pas de compte?",
                     style: TextStyle(color: Colors.green)),
