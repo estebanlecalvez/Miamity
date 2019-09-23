@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _userUsername;
   String _userPassword;
   String _userPhone;
-  String _userPasswordConfirmation;
+  String _userPasswordConfirmation = "";
   String imageURL;
   File sampleImage;
   bool waitingForUploadImage;
@@ -67,6 +67,15 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       sampleImage = tempImage;
     });
+  }
+
+  validateForm() {
+    final formState = _formKey.currentState;
+    if (formState != null) {
+      if (formState.mounted) {
+        formState.validate();
+      }
+    }
   }
 
   bool validateAndSave() {
@@ -172,11 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   bool _isAllOk() {
-    bool result = false;
-    if (isAddressSelected) {
-      result = true;
-    }
-    return result;
+    return isAddressSelected && validateAndSave() && _userPassword == _userPasswordConfirmation;
   }
 
   String validateEmail(String value) {
@@ -192,12 +197,12 @@ class _RegisterPageState extends State<RegisterPage> {
       return null;
   }
 
-  String validateMobile(String value) {
-// Indian Mobile number are of 10 digit only
-    if (value.length != 10)
-      return 'Mobile Number must be of 10 digit';
-    else
+  String validatePasswordConfirmation(String value) {
+    if (value.isEmpty) {
+      return "Vous devez confirmer votre mot de passe.";
+    } else {
       return null;
+    }
   }
 
   sendForm() async {
@@ -242,6 +247,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: TextStyle(fontSize: 20.0, color: Colors.green),
               ),
               Form(
+                onChanged: validateForm(),
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
@@ -271,24 +277,25 @@ class _RegisterPageState extends State<RegisterPage> {
                         label: 'Password*',
                         keyboardType: TextInputType.visiblePassword,
                         isObscureText: true,
+                        onChanged: (value) => _userPassword = value,
                         validator: (String value) => value.isEmpty
                             ? 'Vous devez entrer un mot de passe.'
                             : null,
                         onSaved: (value) => _userPassword = value),
                     MiamityTextFormField(
-                      label: 'Password confirmation*',
-                      keyboardType: TextInputType.visiblePassword,
-                      isObscureText: true,
-                      validator: (String value) => value.isEmpty
-                          ? 'Vous devez confirmer votre mot de passe'
-                          : null,
-                    ),
+                        label: 'Password confirmation*',
+                        keyboardType: TextInputType.visiblePassword,
+                        isObscureText: true,
+                        validator: validatePasswordConfirmation,
+                        onChanged: (value) => _userPasswordConfirmation = value,
+                        onSaved: (value) => _userPasswordConfirmation = value),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 10),
                     )
                   ],
                 ),
               ),
+              _userPasswordConfirmation == _userPassword ?Text(""):Text("Les mots de passes ne correspondent pas",style: TextStyle(color: Colors.red),),
               isAddressSelected
                   ? Wrap(
                       children: <Widget>[

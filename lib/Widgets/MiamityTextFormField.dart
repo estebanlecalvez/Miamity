@@ -8,7 +8,8 @@ class MiamityTextFormField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.label,
-    this.onSaved
+    this.onSaved,
+    this.onChanged
   });
 
   final bool isObscureText;
@@ -17,6 +18,7 @@ class MiamityTextFormField extends StatelessWidget {
   final Function(String) validator;
   final String label;
   final Function onSaved;
+  final Function onChanged;
  
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,8 @@ class MiamityTextFormField extends StatelessWidget {
       child: TextFormField(
         obscureText: isObscureText ?? false,
         controller: controller ?? null,
+        onChanged: onChanged,
+
         decoration: new InputDecoration(
           labelText: "     " + label,
           alignLabelWithHint: true,
