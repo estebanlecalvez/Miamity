@@ -5,13 +5,15 @@ import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
+import 'package:miamitymds/auth.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'ShowUserPage.dart';
 
 class UserList extends StatefulWidget {
-  UserList({Key key, this.title}) : super(key: key);
-  static const String routeName = "/userList";
+  UserList({this.title, this.auth, this.onSignedOut});
   final String title;
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
 
   @override
   _UserListState createState() => _UserListState();
@@ -127,17 +129,7 @@ class _UserListState extends State<UserList> {
               }),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => new RegisterPage()),
-          );
-        },
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-      ),
-      drawer: MiamityAppBar(),
+      drawer: MiamityAppBar(auth:widget.auth,onSignedOut: widget.onSignedOut,),
     );
   }
 }

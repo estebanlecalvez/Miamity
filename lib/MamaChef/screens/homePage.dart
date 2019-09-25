@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
+import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/auth.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
+  HomeScreen({this.title, this.auth, this.onSignedOut});
   final String title;
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
   @override
   HomeScreenState createState() => HomeScreenState();
 }
 
 class HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,10 +21,16 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
           child: Center(
-        child: Text("Accueil"),
+        child: Column(
+          children: <Widget>[
+            Text("Accueil"),
+            MiamityButton(btnColor: Colors.blue,title: "getCurrentUser()",onPressed:()async {print(await widget.auth.currentUser());},)
+          ],
+        ),
       )),
+
       // Set the nav drawer
-      drawer:MiamityAppBar(),
+      drawer: MiamityAppBar(auth: widget.auth, onSignedOut: widget.onSignedOut),
     );
   }
 }

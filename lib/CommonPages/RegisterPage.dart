@@ -1,17 +1,21 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:miamitymds/CommonPages/LoginPage.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
+import 'package:miamitymds/Widgets/PageTitle.dart';
+import 'package:miamitymds/auth.dart';
+import 'package:miamitymds/root_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:miamitymds/Widgets/MiamityTextField.dart';
@@ -23,9 +27,9 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 final StorageReference storageReference = FirebaseStorage().ref();
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({Key key, this.title}) : super(key: key);
+  RegisterPage({Key key, this.auth}) : super(key: key);
+  final BaseAuth auth;
   static const String routeName = "/addUser";
-  final String title;
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -48,6 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   double longitude;
   double latitude;
   String _errorMessage;
+  String _encryptedPassword;
 
   @override
   initState() {
@@ -56,6 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
     isAddressSelected = false;
     longitude = null;
     latitude = null;
+    sampleImage = null;
     _errorMessage = "";
     super.initState();
   }
@@ -107,20 +113,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
   uploadImage() async {
     if (sampleImage == null) {
+      imageURL =
+          "https://cdn.samsung.com/etc/designs/smg/global/imgs/support/cont/NO_IMG_600x600.png";
       return;
+    } else {
+      setState(() {
+        waitingForUploadImage = true;
+      });
+      final StorageReference firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child(Random().nextInt(10000000).toString() + ".jpg");
+      final StorageUploadTask task = firebaseStorageRef.putFile(sampleImage);
+      final StorageTaskSnapshot taskSnapshot = (await task.onComplete);
+      imageURL = await taskSnapshot.ref.getDownloadURL();
+      setState(() {
+        waitingForUploadImage = false;
+      });
     }
-    setState(() {
-      waitingForUploadImage = true;
-    });
-    final StorageReference firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child(Random().nextInt(10000000).toString() + ".jpg");
-    final StorageUploadTask task = firebaseStorageRef.putFile(sampleImage);
-    final StorageTaskSnapshot taskSnapshot = (await task.onComplete);
-    imageURL = await taskSnapshot.ref.getDownloadURL();
-    setState(() {
-      waitingForUploadImage = false;
-    });
   }
 
   wait() {
@@ -149,26 +158,19 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  _storeDataToFirebaseAuthentication() async {
-    final FirebaseUser user =
-        (await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _userEmail,
-      password: _userPassword,
-    ))
-            .user;
-  }
-
-  _storeDataToFirestore() async {
+  _storeData() async {
+    String uid = await widget.auth
+        .createUserWithEmailAndPassword(_userEmail, _userPassword);
     Firestore.instance
         .collection('users')
-        .add({
+        .document(uid)
+        .setData({
           "profile_picture": imageURL,
           "firstname": _userFirstname,
           "lastname": _userLastname,
           "email": _userEmail,
           "phone": _userPhone,
           "username": _userUsername,
-          "password": _userPassword,
           "liste_plats": [],
           "address": selectedAddress,
           "latitude": latitude,
@@ -181,7 +183,9 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   bool _isAllOk() {
-    return isAddressSelected && validateAndSave() && _userPassword == _userPasswordConfirmation;
+    return isAddressSelected &&
+        validateAndSave() &&
+        _userPassword == _userPasswordConfirmation;
   }
 
   String validateEmail(String value) {
@@ -210,10 +214,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (validateAndSave()) {
       //Si on a selectionner une adresse (essentiel pour la creation d'un compte.)
       if (isAddressSelected) {
-        uploadImage();
-        if (imageURL == null) {
-          imageURL = "https://static.thenounproject.com/png/340719-200.png";
-        }
+        if (sampleImage != null) await uploadImage();
         if (_userFirstname.isEmpty) {
           _userFirstname = "No";
         }
@@ -221,11 +222,19 @@ class _RegisterPageState extends State<RegisterPage> {
           _userLastname = "name";
         }
         try {
-          await _storeDataToFirebaseAuthentication();
-          await _storeDataToFirestore();
+          await _storeData();
+          setState(() {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => LoginPage(
+                          auth: widget.auth,
+                        )));
+          });
         } catch (e) {
           setState(() {
-            _errorMessage = e.code;
+            _errorMessage = e.toString();
           });
           print(_errorMessage);
         }
@@ -236,158 +245,194 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Ajouter un utilisateur"),
-        ),
         body: PageView(children: <Widget>[
-          ListView(
-            children: <Widget>[
-              Text(
-                "Ajouter un utilisateur",
-                style: TextStyle(fontSize: 20.0, color: Colors.green),
-              ),
-              Form(
-                onChanged: validateForm(),
-                key: _formKey,
-                child: Column(
+      Stack(
+        children: <Widget>[
+          Opacity(
+            opacity: waitingForUploadImage ? 0.5 : 1,
+            child: ListView(
+              children: <Widget>[
+                Form(
+                  onChanged: validateForm(),
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      PageTitle(title: "Créer un compte"),
+                      FlatButton(
+                        child: Text("Vous avez déjà un compte?",
+                            style: TextStyle(color: Colors.blue)),
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage(
+                                          auth: widget.auth,
+                                        )));
+                          });
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                      ),
+                      MiamityTextFormField(
+                        icon:Icons.person,
+                          label: "Firstname",
+                          onSaved: (value) => _userFirstname = value),
+                      MiamityTextFormField(
+                        icon: Icons.person,
+                          label: "Lastname",
+                          onSaved: (value) => _userLastname = value),
+                      MiamityTextFormField(
+                        icon:Icons.phone,
+                        label: 'Phone',
+                        keyboardType: TextInputType.phone,
+                        onSaved: (value) => _userPhone = value,
+                      ),
+                      MiamityTextFormField(
+                        icon: Icons.email,
+                          label: 'Email*',
+                          keyboardType: TextInputType.emailAddress,
+                          validator: validateEmail,
+                          onSaved: (value) => _userEmail = value),
+                      MiamityTextFormField(
+                          icon: Icons.tag_faces,
+                          label: 'Username*',
+                          validator: (String value) => value.isEmpty
+                              ? 'Vous devez entrer un nom d\'utilisateur.'
+                              : null,
+                          onSaved: (value) => _userUsername = value),
+                      MiamityTextFormField(
+                          icon: Icons.lock,
+                          label: 'Password*',
+                          keyboardType: TextInputType.visiblePassword,
+                          isObscureText: true,
+                          onChanged: (value) => _userPassword = value,
+                          validator: (String value) => value.isEmpty
+                              ? 'Vous devez entrer un mot de passe.'
+                              : null,
+                          onSaved: (value) => _userPassword = value),
+                      MiamityTextFormField(
+                          icon:Icons.lock,
+                          label: 'Password confirmation*',
+                          keyboardType: TextInputType.visiblePassword,
+                          isObscureText: true,
+                          validator: validatePasswordConfirmation,
+                          onChanged: (value) =>
+                              _userPasswordConfirmation = value,
+                          onSaved: (value) =>
+                              _userPasswordConfirmation = value),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                      )
+                    ],
+                  ),
+                ),
+                _userPasswordConfirmation == _userPassword
+                    ? Text("")
+                    : Text(
+                        "Les mots de passes ne correspondent pas",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                isAddressSelected
+                    ? Wrap(
+                        children: <Widget>[
+                          MiamityTextField(
+                              text: selectedAddress,
+                              isReadOnly: true,
+                              onTapFunction: () async {
+                                Prediction p = await PlacesAutocomplete.show(
+                                    context: context, apiKey: kGoogleApiKey);
+                                displayPrediction(p);
+                              }),
+                          MiamityButton(
+                              btnColor: Colors.orange[700],
+                              title: "CHANGER L'ADRESSE",
+                              onPressed: () async {
+                                setState(() {
+                                  selectedAddress = null;
+                                  isAddressSelected = false;
+                                });
+                                Prediction p = await PlacesAutocomplete.show(
+                                    context: context, apiKey: kGoogleApiKey);
+                                displayPrediction(p);
+                              })
+                        ],
+                      )
+                    : MiamityButton(
+                        btnColor: Colors.blue,
+                        title: "JE SELECTIONNE MON ADRESSE",
+                        onPressed: () async {
+                          // show input autocomplete with selected mode
+                          // then get the Prediction selected
+                          Prediction p = await PlacesAutocomplete.show(
+                              context: context, apiKey: kGoogleApiKey);
+                          displayPrediction(p);
+                        }),
+                Container(
+                    child: Row(
                   children: <Widget>[
-                    MiamityTextFormField(
-                        label: "Firstname",
-                        onSaved: (value) => _userFirstname = value),
-                    MiamityTextFormField(
-                        label: "Lastname",
-                        onSaved: (value) => _userLastname = value),
-                    MiamityTextFormField(
-                      label: 'Phone',
-                      keyboardType: TextInputType.phone,
-                      onSaved: (value) => _userPhone = value,
-                    ),
-                    MiamityTextFormField(
-                        label: 'Email*',
-                        keyboardType: TextInputType.emailAddress,
-                        validator: validateEmail,
-                        onSaved: (value) => _userEmail = value),
-                    MiamityTextFormField(
-                        label: 'Username*',
-                        validator: (String value) => value.isEmpty
-                            ? 'Vous devez entrer un nom d\'utilisateur.'
-                            : null,
-                        onSaved: (value) => _userUsername = value),
-                    MiamityTextFormField(
-                        label: 'Password*',
-                        keyboardType: TextInputType.visiblePassword,
-                        isObscureText: true,
-                        onChanged: (value) => _userPassword = value,
-                        validator: (String value) => value.isEmpty
-                            ? 'Vous devez entrer un mot de passe.'
-                            : null,
-                        onSaved: (value) => _userPassword = value),
-                    MiamityTextFormField(
-                        label: 'Password confirmation*',
-                        keyboardType: TextInputType.visiblePassword,
-                        isObscureText: true,
-                        validator: validatePasswordConfirmation,
-                        onChanged: (value) => _userPasswordConfirmation = value,
-                        onSaved: (value) => _userPasswordConfirmation = value),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                    )
+                    sampleImage == null
+                        ? Expanded(
+                            child: MiamityButton(
+                                btnColor: Colors.blue,
+                                title: "JE SELECTIONNE MA PHOTO DE PROFIL",
+                                onPressed: () {
+                                  getImage();
+                                }))
+                        : Row(
+                            children: <Widget>[
+                              Container(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Image.file(sampleImage,
+                                      height: 100, width: 100)),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  MiamityGreenButton(
+                                      title: "CHANGER",
+                                      onPressed: () {
+                                        getImage();
+                                      }),
+                                  Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5.0)),
+                                  MiamityRedButton(
+                                      title: "SUPPRIMER",
+                                      onPressed: () {
+                                        setState(() {
+                                          sampleImage = null;
+                                        });
+                                      }),
+                                ],
+                              ),
+                            ],
+                          )
+                  ],
+                )),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: _isAllOk()
+                            ? MiamityButton(
+                                title: "TERMINER L'INSCRIPTION",
+                                onPressed: () {
+                                  sendForm();
+                                })
+                            : MiamityButton(title: "TERMINER L'INSCRIPTION")),
                   ],
                 ),
-              ),
-              _userPasswordConfirmation == _userPassword ?Text(""):Text("Les mots de passes ne correspondent pas",style: TextStyle(color: Colors.red),),
-              isAddressSelected
-                  ? Wrap(
-                      children: <Widget>[
-                        MiamityTextField(
-                            text: selectedAddress,
-                            isReadOnly: true,
-                            onTapFunction: () async {
-                              Prediction p = await PlacesAutocomplete.show(
-                                  context: context, apiKey: kGoogleApiKey);
-                              displayPrediction(p);
-                            }),
-                        MiamityButton(
-                            btnColor: Colors.orange[700],
-                            title: "CHANGER L'ADRESSE",
-                            onPressed: () async {
-                              setState(() {
-                                selectedAddress = null;
-                                isAddressSelected = false;
-                              });
-                              Prediction p = await PlacesAutocomplete.show(
-                                  context: context, apiKey: kGoogleApiKey);
-                              displayPrediction(p);
-                            })
-                      ],
-                    )
-                  : MiamityButton(
-                      btnColor: Colors.blue,
-                      title: "JE SELECTIONNE MON ADRESSE",
-                      onPressed: () async {
-                        // show input autocomplete with selected mode
-                        // then get the Prediction selected
-                        Prediction p = await PlacesAutocomplete.show(
-                            context: context, apiKey: kGoogleApiKey);
-                        displayPrediction(p);
-                      }),
-              Container(
-                  child: Row(
-                children: <Widget>[
-                  sampleImage == null
-                      ? Expanded(
-                          child: MiamityButton(
-                              btnColor: Colors.blue,
-                              title: "JE SELECTIONNE MA PHOTO DE PROFIL",
-                              onPressed: () {
-                                getImage();
-                              }))
-                      : Row(
-                          children: <Widget>[
-                            Container(
-                                padding: EdgeInsets.all(10.0),
-                                child: Image.file(sampleImage,
-                                    height: 100, width: 100)),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                MiamityGreenButton(
-                                    title: "CHANGER",
-                                    onPressed: () {
-                                      getImage();
-                                    }),
-                                Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 5.0)),
-                                MiamityRedButton(
-                                    title: "SUPPRIMER",
-                                    onPressed: () {
-                                      setState(() {
-                                        sampleImage = null;
-                                      });
-                                    }),
-                              ],
-                            ),
-                          ],
-                        )
-                ],
-              )),
-              Row(
-                children: <Widget>[
-                  waitingForUploadImage
-                      ? Center(child: CircularProgressIndicator())
-                      : Expanded(
-                          child: _isAllOk()
-                              ? MiamityButton(
-                                  title: "TERMINER L'INSCRIPTION",
-                                  onPressed: () {
-                                    sendForm();
-                                  })
-                              : MiamityButton(title: "TERMINER L'INSCRIPTION")),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ]));
+          Opacity(
+            opacity: waitingForUploadImage ? 1.0 : 0,
+            child: MiamityProgressIndicator(),
+          )
+        ],
+      ),
+    ]));
   }
 }

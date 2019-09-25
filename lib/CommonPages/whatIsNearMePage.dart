@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:miamitymds/Widgets/MiamityAppBar.dart';
+import 'package:miamitymds/auth.dart';
 
 class WhatIsNearMePage extends StatefulWidget {
-  WhatIsNearMePage({Key key}) : super(key: key);
-  @override
-  static String routeName = "/whatIsNearMe";
+  WhatIsNearMePage({this.title, this.auth, this.onSignedOut});
+  final String title;
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
   WhatIsNearMePageState createState() => WhatIsNearMePageState();
 }
 
@@ -94,6 +97,7 @@ class WhatIsNearMePageState extends State<WhatIsNearMePage> {
             _googleMap(),
             _listDishes(),
           ],
-        ));
+        ),
+        drawer:MiamityAppBar(auth: widget.auth,onSignedOut: widget.onSignedOut,));
   }
 }
