@@ -24,7 +24,6 @@ class HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: <Widget>[
             Text("Accueil"),
-            MiamityButton(btnColor: Colors.blue,title: "getCurrentUser()",onPressed:()async {print(await widget.auth.currentUser());},)
           ],
         ),
       )),
