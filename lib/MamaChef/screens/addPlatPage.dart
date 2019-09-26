@@ -1,9 +1,18 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
+import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
+import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/auth.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Dish {
   List<DateTime> date;
@@ -44,6 +53,9 @@ class _AddPlateState extends State<AddPlate> {
   String userId;
   String message;
   bool isSuccess;
+  File sampleImage;
+  String imageURL;
+  bool waitingForUploadImage;
 
   @override
   void initState() {
@@ -62,14 +74,65 @@ class _AddPlateState extends State<AddPlate> {
     });
   }
 
+  uploadImage() async {
+    if (sampleImage == null) {
+      imageURL =
+          "https://cdn.samsung.com/etc/designs/smg/global/imgs/support/cont/NO_IMG_600x600.png";
+      return;
+    } else {
+      setState(() {
+        waitingForUploadImage = true;
+      });
+      final StorageReference firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child(Random().nextInt(10000000).toString() + ".jpg");
+      final StorageUploadTask task = firebaseStorageRef.putFile(sampleImage);
+      final StorageTaskSnapshot taskSnapshot = (await task.onComplete);
+      imageURL = await taskSnapshot.ref.getDownloadURL();
+      setState(() {
+        waitingForUploadImage = false;
+      });
+    }
+  }
+
+  void _openFileExplorer() async {
+    ///Check si les permissions ont été données. Sinon les demande.
+    PermissionStatus permissionCamera =
+        await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
+    PermissionStatus permissionPhoto =
+        await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
+    if (permissionCamera.value.toString() ==
+            PermissionStatus.granted.toString() &&
+        permissionPhoto.value.toString() ==
+            PermissionStatus.granted.toString()) {
+      print("permission already granted");
+    } else {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.camera, PermissionGroup.photos]);
+    }
+  }
+
+  Future getImage() async {
+    _openFileExplorer();
+    var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      sampleImage = tempImage;
+    });
+  }
+
   _submit() async {
     if (formKey.currentState.saveAndValidate()) {
+      if (sampleImage != null) {
+        await uploadImage();
+      }
       var formField = formKey.currentState.value;
       Dish dish = Dish.fromJson(formField);
       Firestore.instance
           .collection('dish')
           .add({
             "user_id": userId,
+            "photo": imageURL,
             "dish_title": dish.dishTitle,
             "description": dish.description,
             "price": dish.price,
@@ -195,6 +258,47 @@ class _AddPlateState extends State<AddPlate> {
                       )
                     ],
                   )),
+              Container(
+                  child: Row(
+                children: <Widget>[
+                  sampleImage == null
+                      ? Expanded(
+                          child: MiamityButton(
+                              btnColor: Colors.blue,
+                              title: "JE SELECTIONNE MA PHOTO DE PROFIL",
+                              onPressed: () async{
+                                getImage();
+                              }))
+                      : Row(
+                          children: <Widget>[
+                            Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: Image.file(sampleImage,
+                                    height: 100, width: 100)),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                MiamityGreenButton(
+                                    title: "CHANGER",
+                                    onPressed: () async{
+                                      getImage();
+                                    }),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.0)),
+                                MiamityRedButton(
+                                    title: "SUPPRIMER",
+                                    onPressed: () {
+                                      setState(() {
+                                        sampleImage = null;
+                                      });
+                                    }),
+                              ],
+                            ),
+                          ],
+                        )
+                ],
+              )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -228,7 +332,7 @@ class _AddPlateState extends State<AddPlate> {
                           style: TextStyle(
                               color: Colors.red, fontWeight: FontWeight.bold))
                 ],
-              )
+              ),
             ],
           ),
         ),
