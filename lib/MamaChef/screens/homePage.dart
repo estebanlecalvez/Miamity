@@ -29,6 +29,10 @@ class HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Column(
               children: <Widget>[
+                FlatButton(child: Text("getUserId"),onPressed: () async{
+                  String userId = await widget.auth.currentUser();
+                  print("Current user id : $userId");
+                },),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),

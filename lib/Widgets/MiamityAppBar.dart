@@ -44,18 +44,25 @@ class MiamityAppBarState extends State<MiamityAppBar> {
       );
     }
 
-    void _signOut() async {
+    _signOut() async {
       try {
-        await widget.auth.signOut();
-        widget.onSignedOut();
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => RootPage(
-                    auth: widget.auth,
-                  )),
-        );
+        String currentUser = await widget.auth.currentUser();
+        if (currentUser == null) {
+          deactivate();
+          dispose();
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => RootPage(auth: widget.auth)),
+              (Route<dynamic> route) => false);
+        } else {
+          print("Current user id is: $currentUser");
+          await widget.auth.signOut();
+          widget.onSignedOut();
+          deactivate();
+          dispose();
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => RootPage(auth:widget.auth)),
+              (Route<dynamic> route) => false);
+        }
       } catch (e) {
         print(e);
       }

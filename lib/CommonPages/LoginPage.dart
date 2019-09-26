@@ -46,20 +46,16 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isLoading = true;
         });
-        String userId =
-            await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        String userId = await widget.auth.currentUser();
         if (userId != null) {
           print("Signed in as user with id $userId");
           widget.onSignedIn();
-          setState(() {
-            Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => RootPage(
-                          auth: widget.auth,
-                        )));
-          });
+
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => RootPage(auth: widget.auth)),
+              (Route<dynamic> route) => false);
         }
       }
     } catch (e) {
@@ -67,15 +63,6 @@ class _LoginPageState extends State<LoginPage> {
         _smthngIsWrong = true;
         _errorMessage = "Utilisateur non trouvé.";
         _isLoading = false;
-      });
-      setState(() {
-        Navigator.pop(context);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RootPage(
-                      auth: widget.auth,
-                    )));
       });
     }
   }
@@ -98,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                             PageTitle(title: "Se connecter"),
                             new MiamityTextFormField(
                               controller: _emailController,
-                              icon:Icons.email,
+                              icon: Icons.email,
                               label: "Email",
                               validator: (String value) => value.isEmpty
                                   ? 'Vous devez entrer votre Email'

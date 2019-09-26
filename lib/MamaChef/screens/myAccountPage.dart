@@ -8,6 +8,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:miamitymds/MamaChef/screens/ConsultMyDishes.dart';
 import 'package:miamitymds/MamaChef/screens/modifyMyAccountPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
@@ -250,12 +251,24 @@ class _MyAccountPageState extends State<MyAccountPage> {
     return user;
   }
 
+  _showMyDishes() async {
+    userId = await widget.auth.currentUser();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConsultMyDishes(
+                  auth: widget.auth,
+                  onSignedOut: widget.onSignedOut,
+                  currentUserId: userId,
+                )));
+  }
+
   _modifyAccount() async {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
-                ModifyMyAccountPage(auth: widget.auth,user:user)));
+                ModifyMyAccountPage(auth: widget.auth, user: user)));
   }
 
   @override
@@ -272,16 +285,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     padding: EdgeInsets.symmetric(vertical: 10.0),
                   ),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Hero(
-                      tag:"user_profile_picture_modify_account",
-                      child:FadeInImage.memoryNetwork(
-                      height: 100,
-                      placeholder: kTransparentImage,
-                      fadeInDuration: const Duration(seconds: 1),
-                      image: user["profile_picture"] ?? "",
-                    ),
-                  )),
+                      borderRadius: BorderRadius.circular(100),
+                      child: Hero(
+                        tag: "user_profile_picture_modify_account",
+                        child: FadeInImage.memoryNetwork(
+                          height: 100,
+                          placeholder: kTransparentImage,
+                          fadeInDuration: const Duration(seconds: 1),
+                          image: user["profile_picture"] ?? "",
+                        ),
+                      )),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10.0),
                   ),
@@ -320,8 +333,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     padding: EdgeInsets.symmetric(vertical: 10),
                   ),
                   MiamityButton(
-                    title: "CHANGER DE MOT DE PASSE",
-                    onPressed: () {},
+                    title: "CONSULTER MES PLATS",
+                    onPressed: () {
+                      _showMyDishes();
+                    },
                   ),
                   MiamityButton(
                     btnColor: Colors.green,

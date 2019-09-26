@@ -29,6 +29,7 @@ dependencies:
   flutter_google_places: 
   geocoder:
   firebase_auth:
+  flutter_launcher_icons:
   dbcrypt: 
   flutter:
     sdk: flutter

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/LoginPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
+import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/auth.dart';
 
 class RootPage extends StatefulWidget {
@@ -10,23 +11,25 @@ class RootPage extends StatefulWidget {
   State<StatefulWidget> createState() => RootPageState();
 }
 
-enum AuthStatus { notSignedIn, signedIn }
+enum AuthStatus { notSignedIn, signedIn, awaiting }
 
 class RootPageState extends State<RootPage> {
-  AuthStatus _authStatus = AuthStatus.notSignedIn;
+  AuthStatus _authStatus = AuthStatus.awaiting;
 
   @override
   void initState() {
     super.initState();
     //On verifie si le user est connecté
     widget.auth.currentUser().then((userId) {
-      setState(() {
-        if (userId != null) {
-          _authStatus = AuthStatus.signedIn;
-        } else {
+      if (userId == null) {
+        setState(() {
           _authStatus = AuthStatus.notSignedIn;
-        }
-      });
+        });
+      } else {
+        setState(() {
+          _authStatus = AuthStatus.signedIn;
+        });
+      }
     });
   }
 
@@ -52,6 +55,8 @@ class RootPageState extends State<RootPage> {
         );
       case AuthStatus.signedIn:
         return new HomeScreen(auth: widget.auth, onSignedOut: _signedOut);
+      case AuthStatus.awaiting:
+        return new Scaffold(body: PageView(children: <Widget>[MiamityProgressIndicator()]));
     }
   }
 }

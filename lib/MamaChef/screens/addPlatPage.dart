@@ -41,6 +41,55 @@ class AddPlate extends StatefulWidget {
 
 class _AddPlateState extends State<AddPlate> {
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
+  String userId;
+  String message;
+  bool isSuccess;
+
+  @override
+  void initState() {
+    super.initState();
+    message = "";
+    isSuccess = true;
+    widget.auth.currentUser().then((currentUserId) {
+      print("Current user id from AddPlatPage $currentUserId");
+      if (currentUserId == null) {
+        widget.onSignedOut;
+      } else {
+        setState(() {
+          userId = currentUserId;
+        });
+      }
+    });
+  }
+
+  _submit() async {
+    if (formKey.currentState.saveAndValidate()) {
+      var formField = formKey.currentState.value;
+      Dish dish = Dish.fromJson(formField);
+      Firestore.instance
+          .collection('dish')
+          .add({
+            "user_id": userId,
+            "dish_title": dish.dishTitle,
+            "description": dish.description,
+            "price": dish.price,
+            "nb_parts": dish.nbParts,
+            "date": dish.date,
+            "locally": dish.locally
+          })
+          .then((result) => {print('C\'est fait')})
+          .catchError((err) => err);
+      setState(() {
+        isSuccess = true;
+        message = "Plat ajouté avec succès";
+      });
+    } else {
+      setState(() {
+        isSuccess = false;
+        message = "Veuillez renseigner les champs du formulaire.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +102,13 @@ class _AddPlateState extends State<AddPlate> {
           padding: EdgeInsets.all(10),
           child: ListView(
             children: <Widget>[
+              FlatButton(
+                child: Text("getUserId"),
+                onPressed: () async {
+                  String userId = await widget.auth.currentUser();
+                  print("Current user id : $userId");
+                },
+              ),
               FormBuilder(
                   key: formKey,
                   initialValue: {
@@ -159,7 +215,18 @@ class _AddPlateState extends State<AddPlate> {
                       },
                       child: Text('Reset'),
                     ),
-                  )
+                  ),
+                ],
+              ),
+              Wrap(
+                children: <Widget>[
+                  isSuccess
+                      ? Text(message,
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold))
+                      : Text(message,
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold))
                 ],
               )
             ],
@@ -171,27 +238,5 @@ class _AddPlateState extends State<AddPlate> {
         onSignedOut: widget.onSignedOut,
       ),
     );
-  }
-
-  void _submit() {
-    if (formKey.currentState.saveAndValidate()) {
-      var formField = formKey.currentState.value;
-      Dish dish = Dish.fromJson(formField);
-      print(dish.date);
-      Firestore.instance
-          .collection('dish')
-          .add({
-            "dish_title": dish.dishTitle,
-            "description": dish.description,
-            "price": dish.price,
-            "nb_parts": dish.nbParts,
-            "date": dish.date,
-            "locally": dish.locally
-          })
-          .then((result) => {print('C\'est fait')})
-          .catchError((err) => err);
-    } else {
-      print('les conditions ne sont pas respectées');
-    }
   }
 }
