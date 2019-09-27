@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:miamitymds/CommonPages/LoginPage.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
@@ -69,9 +70,15 @@ class _RegisterPageState extends State<RegisterPage> {
   Future getImage() async {
     _openFileExplorer();
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-
+    File croppedFile = await ImageCropper.cropImage(
+      sourcePath: tempImage.path,
+      ratioX: 1.0,
+      ratioY: 1.0,
+      maxWidth: 400,
+      maxHeight: 400,
+    );
     setState(() {
-      sampleImage = tempImage;
+      sampleImage = croppedFile;
     });
   }
 
@@ -277,21 +284,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                       ),
                       MiamityTextFormField(
-                        icon:Icons.person,
+                          icon: Icons.person,
                           label: "Firstname",
                           onSaved: (value) => _userFirstname = value),
                       MiamityTextFormField(
-                        icon: Icons.person,
+                          icon: Icons.person,
                           label: "Lastname",
                           onSaved: (value) => _userLastname = value),
                       MiamityTextFormField(
-                        icon:Icons.phone,
+                        icon: Icons.phone,
                         label: 'Phone',
                         keyboardType: TextInputType.phone,
                         onSaved: (value) => _userPhone = value,
                       ),
                       MiamityTextFormField(
-                        icon: Icons.email,
+                          icon: Icons.email,
                           label: 'Email*',
                           keyboardType: TextInputType.emailAddress,
                           validator: validateEmail,
@@ -314,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               : null,
                           onSaved: (value) => _userPassword = value),
                       MiamityTextFormField(
-                          icon:Icons.lock,
+                          icon: Icons.lock,
                           label: 'Password confirmation*',
                           keyboardType: TextInputType.visiblePassword,
                           isObscureText: true,

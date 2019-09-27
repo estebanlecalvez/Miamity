@@ -13,8 +13,12 @@
 
         <!-- Google maps integration -->
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg"/>        
-        
+            android:value="AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg"/>  
+        <!-- Cropper d'image -->      
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

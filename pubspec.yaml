@@ -30,7 +30,8 @@ dependencies:
   geocoder:
   firebase_auth:
   flutter_launcher_icons:
-  dbcrypt: 
+  dbcrypt:
+  image_cropper:
   flutter:
     sdk: flutter
 
