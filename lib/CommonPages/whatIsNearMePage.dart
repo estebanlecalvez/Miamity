@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
@@ -15,6 +16,15 @@ class WhatIsNearMePage extends StatefulWidget {
 
 class WhatIsNearMePageState extends State<WhatIsNearMePage> {
   Completer<GoogleMapController> _controller = Completer();
+
+  Widget _buildListItem(BuildContext context,DocumentSnapshot document){
+    //TODO Faire un stream builder qui va chercher en temps réel en base les plats.
+    //TODO Afficher les plats dans des cards en bas de la map..
+    //TODO pour chaque plat, aller chercher l'utilisateur , puis mettre Lat/Lng dans une List<Marker>. Autre StreamBuilder??
+    //TODO On click sur un plat dans les cards, déplacer la map vers le Marker lié.
+    //TODO Ajouter un bouton aux cards qui OnClick redirige vers la page de consultation du plat > Pour aller ensuite vers la commande.
+    return null;
+  }
 
   Widget _listDishes() {
     return Align(
