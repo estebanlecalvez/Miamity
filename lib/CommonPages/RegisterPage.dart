@@ -184,7 +184,12 @@ class _RegisterPageState extends State<RegisterPage> {
           "longitude": longitude,
         })
         .then((result) => {
-              Navigator.pop(context),
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RootPage(
+                            auth: widget.auth,
+                          )))
             })
         .catchError((err) => err);
   }

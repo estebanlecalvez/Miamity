@@ -51,10 +51,9 @@ class _LoginPageState extends State<LoginPage> {
         if (userId != null) {
           print("Signed in as user with id $userId");
           widget.onSignedIn();
-
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (context) => RootPage(auth: widget.auth)),
+                  builder: (context) => RootPage(auth: widget.auth,)),
               (Route<dynamic> route) => false);
         }
       }
@@ -114,7 +113,6 @@ class _LoginPageState extends State<LoginPage> {
                                   style: TextStyle(color: Colors.blue)),
                               onPressed: () {
                                 setState(() {
-                                  Navigator.pop(context);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

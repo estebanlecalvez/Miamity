@@ -33,12 +33,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
         title: Text(s),
         onTap: () {
           setState(() {
-            // pop closes the drawer
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => route),
-            );
+           widget.auth.changePage(context, route);
           });
         },
       );
@@ -46,23 +41,10 @@ class MiamityAppBarState extends State<MiamityAppBar> {
 
     _signOut() async {
       try {
-        String currentUser = await widget.auth.currentUser();
-        if (currentUser == null) {
-          deactivate();
-          dispose();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => RootPage(auth: widget.auth)),
-              (Route<dynamic> route) => false);
-        } else {
-          print("Current user id is: $currentUser");
-          await widget.auth.signOut();
-          widget.onSignedOut();
-          deactivate();
-          dispose();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => RootPage(auth:widget.auth)),
-              (Route<dynamic> route) => false);
-        }
+        widget.auth.signOut();
+        widget.onSignedOut();
+        widget.auth.changePage(context,
+            RootPage(auth: widget.auth));
       } catch (e) {
         print(e);
       }

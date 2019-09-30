@@ -1,5 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/widgets.dart';
+import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
+import 'package:miamitymds/root_page.dart';
 
 abstract class BaseAuth {
   Future<String> signInWithEmailAndPassword(String email, String password);
@@ -7,6 +12,7 @@ abstract class BaseAuth {
   Future<String> currentUser();
   Future<void> signOut();
   Future<bool> isAUserConnected();
+  void changePage(BuildContext context, Widget route);
 }
 
 class Auth implements BaseAuth {
@@ -37,6 +43,23 @@ class Auth implements BaseAuth {
 
   Future<bool> isAUserConnected() async {
     return await currentUser() != null;
+  }
+
+  void changePage(BuildContext context,Widget route) async{
+    bool isConnected = await isAUserConnected();
+    if (isConnected) {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => route)
+      );
+    } else {
+      signOut();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => RootPage(auth: new Auth())),
+          (Route<dynamic> route) => false);
+    }
   }
 
   Future<String> currentUser() async {
