@@ -235,15 +235,7 @@ class _RegisterPageState extends State<RegisterPage> {
         }
         try {
           await _storeData();
-          setState(() {
-            Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => LoginPage(
-                          auth: widget.auth,
-                        )));
-          });
+          widget.auth.changePage(context, RootPage(auth: widget.auth,));
         } catch (e) {
           setState(() {
             _errorMessage = e.toString();

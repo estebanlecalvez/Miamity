@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -10,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
+import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
@@ -119,16 +122,18 @@ class _AddPlateState extends State<AddPlate> {
   Future getImage() async {
     _openFileExplorer();
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-    File croppedFile = await ImageCropper.cropImage(
-      sourcePath: tempImage.path,
-      ratioX: 1.0,
-      ratioY: 1.0,
-      maxWidth: 400,
-      maxHeight: 400,
-    );
-    setState(() {
-      sampleImage = croppedFile;
-    });
+    if (tempImage != null) {
+      File croppedFile = await ImageCropper.cropImage(
+        sourcePath: tempImage.path,
+        ratioX: 1.0,
+        ratioY: 1.0,
+        maxWidth: 400,
+        maxHeight: 400,
+      );
+      setState(() {
+        sampleImage = croppedFile;
+      });
+    }
   }
 
   _submit() async {
@@ -182,77 +187,84 @@ class _AddPlateState extends State<AddPlate> {
             children: <Widget>[
               Opacity(
                 opacity: _isLoading ? 0.7 : 1.0,
-                child: Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: ListView(
-                      children: <Widget>[
-                        FlatButton(
-                          child: Text("getUserId"),
-                          onPressed: () async {
-                            String userId = await widget.auth.currentUser();
-                            print("Current user id : $userId");
-                          },
-                        ),
-                        FormBuilder(
-                            key: formKey,
-                            initialValue: {
-                              'date': [DateTime.now(), DateTime.now()],
-                              'locally': null,
-                              'nbParts': 1,
-                              'dishTitle': null,
-                              'description': null,
-                              'price': null
-                            },
-                            autovalidate: true,
-                            child: Column(
-                              children: <Widget>[
-                                FormBuilderTextField(
-                                  attribute: 'dishTitle',
-                                  decoration: InputDecoration(
-                                      labelText: 'Intitulé du plat'),
-                                  validators: [
-                                    FormBuilderValidators.required(
-                                        errorText: 'Le champ est requis'),
-                                    FormBuilderValidators.max(70)
-                                  ],
-                                ),
-                                FormBuilderTextField(
-                                  attribute: 'description',
-                                  decoration: InputDecoration(
-                                      labelText: 'Description du plat',
-                                      hintText: 'Je suis le placeholder'),
-                                  validators: [
-                                    FormBuilderValidators.required(
-                                        errorText: 'Le champ est requis'),
-                                    FormBuilderValidators.max(300)
-                                  ],
-                                ),
-                                FormBuilderStepper(
+                child: ListView(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("getUserId"),
+                      onPressed: () async {
+                        String userId = await widget.auth.currentUser();
+                        print("Current user id : $userId");
+                      },
+                    ),
+                    FormBuilder(
+                        key: formKey,
+                        initialValue: {
+                          'date': [DateTime.now(), DateTime.now()],
+                          'locally': null,
+                          'nbParts': 1,
+                          'dishTitle': null,
+                          'description': null,
+                          'price': null
+                        },
+                        autovalidate: true,
+                        child: Column(
+                          children: <Widget>[
+                            MiamityFormBuilderTextField(
+                              icon: Icons.person,
+                              attribute: 'dishTitle',
+                              label: 'Intitulé du plat',
+                              validators: [
+                                FormBuilderValidators.required(
+                                    errorText: 'Le champ est requis'),
+                                FormBuilderValidators.max(70)
+                              ],
+                            ),
+                            MiamityFormBuilderTextField(
+                              icon: Icons.person,
+                              attribute: 'description',
+                              label: 'Description de votre plat',
+                              validators: [
+                                FormBuilderValidators.required(
+                                    errorText: 'Le champ est requis'),
+                                FormBuilderValidators.max(300)
+                              ],
+                            ),
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                child: FormBuilderStepper(
                                   initialValue: 1,
                                   step: 1,
                                   attribute: 'nbParts',
                                   decoration: InputDecoration(
+                                    alignLabelWithHint: true,
                                     labelText: 'Nombres de parts',
+                                    contentPadding: EdgeInsets.all(15),
+                                    prefixIcon: Icon(Icons.pie_chart),
+                                    border: new OutlineInputBorder(
+                                        borderSide: new BorderSide(),
+                                        borderRadius: new BorderRadius.all(
+                                            Radius.circular(50))),
                                   ),
                                   validators: [
                                     FormBuilderValidators.required(),
                                   ],
-                                ),
-                                FormBuilderTextField(
-                                  attribute: 'price',
-                                  decoration: InputDecoration(
-                                    labelText: 'Price',
-                                  ),
-                                  validators: [
-                                    FormBuilderValidators.required(
-                                        errorText: 'Le champs est requis'),
-                                    FormBuilderValidators.numeric(
-                                        errorText:
-                                            "La valeur ne doit pas comprendre de lettres")
-                                  ],
-                                ),
-                                FormBuilderDateRangePicker(
+                                )),
+                            MiamityFormBuilderTextField(
+                              attribute: 'price',
+                              label: 'Prix par part',
+                              keyboardType: TextInputType.number,
+                              icon: Icons.euro_symbol,
+                              validators: [
+                                FormBuilderValidators.required(
+                                    errorText: 'Le champs est requis'),
+                                FormBuilderValidators.numeric(
+                                    errorText:
+                                        "La valeur ne doit pas comprendre de lettres")
+                              ],
+                            ),
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                child: FormBuilderDateRangePicker(
                                   firstDate: DateTime.now()
                                       .subtract(new Duration(days: 1)),
                                   lastDate: DateTime.now()
@@ -260,16 +272,34 @@ class _AddPlateState extends State<AddPlate> {
                                   format: DateFormat("dd/MM/yyyy"),
                                   attribute: 'date',
                                   decoration: InputDecoration(
-                                      labelText: 'Heure de disponibilité'),
+                                    labelText: 'Heure de disponibilité',
+                                    prefixIcon: Icon(Icons.calendar_today),
+                                    alignLabelWithHint: true,
+                                    border: new OutlineInputBorder(
+                                        borderSide: new BorderSide(),
+                                        borderRadius: new BorderRadius.all(
+                                            Radius.circular(50))),
+                                  ),
                                   validators: [
                                     FormBuilderValidators.required(
                                         errorText: 'Le champs est requis'),
                                   ],
-                                ),
-                                FormBuilderDropdown(
+                                )),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                            ),
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                child: FormBuilderDropdown(
                                   attribute: 'locally',
                                   decoration: InputDecoration(
-                                      labelText: 'Sur place ou emporté ?'),
+                                    labelText: 'Sur place ou emporté ?',
+                                    contentPadding: EdgeInsets.all(18),
+                                    border: new OutlineInputBorder(
+                                        borderSide: new BorderSide(),
+                                        borderRadius: new BorderRadius.all(
+                                            Radius.circular(50))),
+                                  ),
                                   items: ['Sur place', 'A emporté']
                                       .map((locally) => DropdownMenuItem(
                                           value: locally,
@@ -279,91 +309,95 @@ class _AddPlateState extends State<AddPlate> {
                                     FormBuilderValidators.required(
                                         errorText: 'Le champs est requis')
                                   ],
-                                )
-                              ],
-                            )),
-                        Container(
-                            child: Row(
-                          children: <Widget>[
-                            sampleImage == null
-                                ? Expanded(
-                                    child: MiamityButton(
-                                        btnColor: Colors.blue,
-                                        title:
-                                            "JE CHOISIS LA PHOTO DE MON PLAT",
-                                        onPressed: () async {
-                                          getImage();
-                                        }))
-                                : Row(
-                                    children: <Widget>[
-                                      Container(
-                                          padding: EdgeInsets.all(10.0),
-                                          child: Image.file(sampleImage,
-                                              height: 100, width: 100)),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          MiamityGreenButton(
-                                              title: "CHANGER",
-                                              onPressed: () async {
-                                                getImage();
-                                              }),
-                                          Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 5.0)),
-                                          MiamityRedButton(
-                                              title: "SUPPRIMER",
-                                              onPressed: () {
-                                                setState(() {
-                                                  sampleImage = null;
-                                                });
-                                              }),
-                                        ],
-                                      ),
-                                    ],
-                                  )
+                                )),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                            ),
                           ],
                         )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: MaterialButton(
-                                color: Colors.green,
-                                onPressed: _submit,
-                                child: Text('Mettre en ligne'),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: MaterialButton(
-                                color: Colors.grey,
-                                onPressed: () => {
-                                  formKey.currentState.reset(),
+                    Container(
+                        child: Row(
+                      children: <Widget>[
+                        sampleImage == null
+                            ? MiamityDoubleButton(
+                                btnColor1: Colors.blue,
+                                title1: "JE CHOISIS UNE PHOTO",
+                                onPressed1: () async {
+                                  getImage();
                                 },
-                                child: Text('Reset'),
-                              ),
-                            ),
-                          ],
+                                title2: "JE PREND UNE PHOTO",
+                                onPressed2: () {
+                                  print("yo");
+                                },
+                              )
+                            : Row(
+                                children: <Widget>[
+                                  Container(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Image.file(sampleImage,
+                                          height: 100, width: 100)),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      MiamityGreenButton(
+                                          title: "CHANGER",
+                                          onPressed: () async {
+                                            getImage();
+                                          }),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5.0)),
+                                      MiamityRedButton(
+                                          title: "SUPPRIMER",
+                                          onPressed: () {
+                                            setState(() {
+                                              sampleImage = null;
+                                            });
+                                          }),
+                                    ],
+                                  ),
+                                ],
+                              )
+                      ],
+                    )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: MaterialButton(
+                            color: Colors.green,
+                            onPressed: _submit,
+                            child: Text('Mettre en ligne'),
+                          ),
                         ),
-                        Wrap(
-                          children: <Widget>[
-                            isSuccess
-                                ? Text(message,
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold))
-                                : Text(message,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold))
-                          ],
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: MaterialButton(
+                            color: Colors.grey,
+                            onPressed: () => {
+                              formKey.currentState.reset(),
+                            },
+                            child: Text('Reset'),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                    Wrap(
+                      children: <Widget>[
+                        isSuccess
+                            ? Text(message,
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold))
+                            : Text(message,
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               Opacity(
