@@ -45,15 +45,10 @@ class Auth implements BaseAuth {
     return await currentUser() != null;
   }
 
-  void changePage(BuildContext context,Widget route) async{
+  void changePage(BuildContext context, Widget route) async {
     bool isConnected = await isAUserConnected();
     if (isConnected) {
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => route)
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => route));
     } else {
       signOut();
       Navigator.of(context).pushAndRemoveUntil(

@@ -9,8 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
-import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:camera/camera.dart';
 import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
 import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
@@ -45,10 +46,11 @@ Dish _formFieldFromJson(Map<String, dynamic> json) {
 }
 
 class AddPlate extends StatefulWidget {
-  AddPlate({this.title, this.auth, this.onSignedOut});
+  AddPlate({this.title, this.auth, this.onSignedOut, this.image});
   final String title;
   final BaseAuth auth;
   final VoidCallback onSignedOut;
+  final File image;
   @override
   _AddPlateState createState() => _AddPlateState();
 }
@@ -62,13 +64,23 @@ class _AddPlateState extends State<AddPlate> {
   String imageURL;
   bool waitingForUploadImage;
   bool _isLoading = false;
+  List<CameraDescription> cameras;
+  CameraDescription firstCamera;
+  bool isAnImage = false;
 
   @override
   void initState() {
     super.initState();
+    // Obtain a list of the available cameras on the device.
     message = "";
     _isLoading = false;
     isSuccess = true;
+    if (widget.image != null) {
+      isAnImage = true;
+      setState(() {
+        sampleImage = widget.image;
+      });
+    }
     widget.auth.currentUser().then((currentUserId) {
       print("Current user id from AddPlatPage $currentUserId");
       if (currentUserId == null) {
@@ -127,7 +139,7 @@ class _AddPlateState extends State<AddPlate> {
         sourcePath: tempImage.path,
         ratioX: 1.0,
         ratioY: 1.0,
-        maxWidth: 400,
+        maxWidth: 600,
         maxHeight: 400,
       );
       setState(() {
@@ -318,7 +330,7 @@ class _AddPlateState extends State<AddPlate> {
                     Container(
                         child: Row(
                       children: <Widget>[
-                        sampleImage == null
+                        sampleImage == null || widget.image == null
                             ? MiamityDoubleButton(
                                 btnColor1: Colors.blue,
                                 title1: "JE CHOISIS UNE PHOTO",
@@ -327,7 +339,12 @@ class _AddPlateState extends State<AddPlate> {
                                 },
                                 title2: "JE PREND UNE PHOTO",
                                 onPressed2: () {
-                                  print("yo");
+                                  widget.auth.changePage(
+                                      context,
+                                      TakeAPhotoPage(
+                                        auth: widget.auth,
+                                        onSignedOut: widget.onSignedOut,
+                                      ));
                                 },
                               )
                             : Row(

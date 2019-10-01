@@ -235,7 +235,11 @@ class _RegisterPageState extends State<RegisterPage> {
         }
         try {
           await _storeData();
-          widget.auth.changePage(context, RootPage(auth: widget.auth,));
+          widget.auth.changePage(
+              context,
+              RootPage(
+                auth: widget.auth,
+              ));
         } catch (e) {
           setState(() {
             _errorMessage = e.toString();

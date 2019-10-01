@@ -23,7 +23,11 @@ class ShowUserPage extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Hero(
-                          tag: "profile_picture_of" + document["firstname"],
+                          tag: "profile_picture_of" +
+                              document["firstname"] +
+                              "picture=" +
+                              document["profile_picture"] +
+                              document.documentID,
                           child: FadeInImage.memoryNetwork(
                             height: 300,
                             placeholder: kTransparentImage,

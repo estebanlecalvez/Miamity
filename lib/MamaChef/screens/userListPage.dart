@@ -40,14 +40,19 @@ class _UserListState extends State<UserList> {
                     children: <Widget>[
                       Column(children: <Widget>[
                         Hero(
-                          tag:"profile_picture_of"+document["firstname"],
+                          tag: "profile_picture_of" +
+                              document["firstname"] +
+                              "picture=" +
+                              document["profile_picture"] +
+                              document.documentID,
                           child: FadeInImage.memoryNetwork(
-                          height: 130,
-                          width: 120,
-                          placeholder: kTransparentImage,
-                          fadeInDuration: const Duration(seconds: 1),
-                          image: document["profile_picture"],
-                        ),)
+                            height: 130,
+                            width: 120,
+                            placeholder: kTransparentImage,
+                            fadeInDuration: const Duration(seconds: 1),
+                            image: document["profile_picture"],
+                          ),
+                        )
                       ]),
                       Container(
                         child: Text(
@@ -129,7 +134,10 @@ class _UserListState extends State<UserList> {
               }),
         ],
       ),
-      drawer: MiamityAppBar(auth:widget.auth,onSignedOut: widget.onSignedOut,),
+      drawer: MiamityAppBar(
+        auth: widget.auth,
+        onSignedOut: widget.onSignedOut,
+      ),
     );
   }
 }
