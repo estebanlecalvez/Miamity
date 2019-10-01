@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miamitymds/CommonPages/DishesList.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/myAccountPage.dart';
@@ -83,14 +84,17 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 MiamityButton(
-                    title: "JE REGARDE LES PLATS PROCHE DE MOI",
-                    onPressed: () {
-                      widget.auth.changePage(
-                          context,
-                          WhatIsNearMePage(
-                              auth: widget.auth,
-                              onSignedOut: widget.onSignedOut));
-                    }),
+                  title: "JE REGARDE LES PLATS PROCHE DE MOI",
+                  onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DishesListPage(
+                                )),
+                      );
+                    }
+                ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
