@@ -12,7 +12,8 @@ class MiamityTextFormField extends StatelessWidget {
       this.onChanged,
       this.icon,
       this.readOnly,
-      this.isFocused,this.onTap});
+      this.isFocused,
+      this.onTap});
 
   final bool isObscureText;
   final TextEditingController controller;
@@ -35,7 +36,7 @@ class MiamityTextFormField extends StatelessWidget {
         autofocus: isFocused ?? false,
         controller: controller ?? null,
         onChanged: onChanged,
-        onTap:onTap,
+        onTap: onTap,
         readOnly: readOnly ?? false,
         decoration: new InputDecoration(
           labelText: icon != null ? label : "     $label",

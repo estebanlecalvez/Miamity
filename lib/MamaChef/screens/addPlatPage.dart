@@ -12,11 +12,15 @@ import 'package:intl/intl.dart';
 import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:camera/camera.dart';
+import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
 import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
+import 'package:miamitymds/Widgets/MiamityMultiSelect.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
+import 'package:miamitymds/Widgets/MiamityTextField.dart';
+import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -67,6 +71,26 @@ class _AddPlateState extends State<AddPlate> {
   List<CameraDescription> cameras;
   CameraDescription firstCamera;
   bool isAnImage = false;
+  String dropdownValue = "One";
+  List<String> typeList = [
+    "Accompagnements",
+    "Amuse bouches",
+    "Pains",
+    "Pâtés",
+    "Pâtes alimentaires",
+    "Petits-déjeuners",
+    "Plat principal",
+    "Poissons",
+    "Salades",
+    "Sandwiches",
+    "Soupes",
+    "Viande",
+    "Desserts",
+    "Fondues",
+    "Fritures",
+    "Boissons",
+  ];
+  List<String> selectedTypesList;
 
   @override
   void initState() {
@@ -168,7 +192,8 @@ class _AddPlateState extends State<AddPlate> {
             "price": dish.price,
             "nb_parts": dish.nbParts,
             "date": dish.date,
-            "locally": dish.locally
+            "locally": dish.locally,
+            "types": selectedTypesList
           })
           .then((result) => {print('C\'est fait')})
           .catchError((err) => err);
@@ -185,6 +210,47 @@ class _AddPlateState extends State<AddPlate> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  _showTypePlatDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(5),
+            title: Text("Type(s) du plat"),
+            content: MiamityMultiSelect(
+              typeList,
+              onSelectionChanged: (selectedList) {
+                setState(() {
+                  selectedTypesList = selectedList;
+                });
+              },
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          );
+        });
+  }
+
+  _buildSelectedTypesList() {
+    List<Widget> choices = List();
+    if (selectedTypesList != null) {
+      selectedTypesList.forEach((item) {
+        choices.add(Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Chip(
+            label: Text(item),
+          ),
+        ));
+      });
+    }
+    return choices;
   }
 
   @override
@@ -275,7 +341,7 @@ class _AddPlateState extends State<AddPlate> {
                               ],
                             ),
                             Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                padding: EdgeInsets.all(6.0),
                                 child: FormBuilderDateRangePicker(
                                   firstDate: DateTime.now()
                                       .subtract(new Duration(days: 1)),
@@ -298,21 +364,18 @@ class _AddPlateState extends State<AddPlate> {
                                   ],
                                 )),
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 4),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                                padding: EdgeInsets.all(6.0),
                                 child: FormBuilderDropdown(
                                   attribute: 'locally',
                                   decoration: InputDecoration(
-                                    labelText: 'Sur place ou emporté ?',
+                                    labelText: 'Sur place ou à emporter ?',
                                     contentPadding: EdgeInsets.all(18),
                                     border: new OutlineInputBorder(
                                         borderSide: new BorderSide(),
                                         borderRadius: new BorderRadius.all(
                                             Radius.circular(50))),
                                   ),
-                                  items: ['Sur place', 'A emporté']
+                                  items: ['Sur place', 'A emporter']
                                       .map((locally) => DropdownMenuItem(
                                           value: locally,
                                           child: Text("$locally")))
@@ -321,6 +384,18 @@ class _AddPlateState extends State<AddPlate> {
                                     FormBuilderValidators.required(
                                         errorText: 'Le champs est requis')
                                   ],
+                                )),
+                            selectedTypesList == null
+                                ? MiamityTextFormField(
+                                    label: "Types de plat",
+                                    onTap: () => _showTypePlatDialog(),
+                                    readOnly: true,
+                                  )
+                                : Text("Types de plat:"),
+                            FlatButton(
+                                onPressed: () => _showTypePlatDialog(),
+                                child: Wrap(
+                                  children: _buildSelectedTypesList(),
                                 )),
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 4),
