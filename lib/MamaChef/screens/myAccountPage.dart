@@ -1,24 +1,16 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:miamitymds/MamaChef/screens/ConsultMyDishes.dart';
 import 'package:miamitymds/MamaChef/screens/modifyMyAccountPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
-import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
-import 'package:miamitymds/Widgets/MiamityRedButton.dart';
-import 'package:miamitymds/Widgets/MiamityTextField.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/auth.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 const kGoogleApiKey = "AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg";
@@ -63,8 +55,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
     isUserCharged();
     super.initState();
   }
-
-
 
   Future<void> isUserCharged() async {
     bool result = await widget.auth.isAUserConnected();
@@ -184,7 +174,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
               )
             ])
           : MiamityProgressIndicator(),
-      drawer: MiamityAppBar(
+      endDrawer: MiamityAppBar(
         auth: widget.auth,
         onSignedOut: widget.onSignedOut,
       ),

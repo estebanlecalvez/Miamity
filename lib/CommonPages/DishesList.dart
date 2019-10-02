@@ -2,9 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/commons/DishesCard.dart';
+import 'package:miamitymds/auth.dart';
 
 class DishesListPage extends StatefulWidget {
+  DishesListPage({this.auth, this.onSignedOut});
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
   @override
   createState() => DishesListState();
 }
@@ -35,10 +40,17 @@ class DishesListState extends State<DishesListPage> {
                       mainAxisSpacing: 10),
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index) => DishesCardWidget(
-                      document: snapshot.data.documents[index]),
+                    document: snapshot.data.documents[index],
+                    auth: widget.auth,
+                    onSignedOut: widget.onSignedOut,
+                  ),
                 );
               }),
         ],
+      ),
+      endDrawer: MiamityAppBar(
+        auth: widget.auth,
+        onSignedOut: widget.onSignedOut,
       ),
     );
   }

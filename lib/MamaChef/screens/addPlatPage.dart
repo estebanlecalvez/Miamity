@@ -496,7 +496,7 @@ class _AddPlateState extends State<AddPlate> {
           ),
         ],
       ),
-      drawer: MiamityAppBar(
+      endDrawer: MiamityAppBar(
         auth: widget.auth,
         onSignedOut: widget.onSignedOut,
       ),

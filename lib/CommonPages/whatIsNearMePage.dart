@@ -17,7 +17,7 @@ class WhatIsNearMePage extends StatefulWidget {
 class WhatIsNearMePageState extends State<WhatIsNearMePage> {
   Completer<GoogleMapController> _controller = Completer();
 
-  Widget _buildListItem(BuildContext context,DocumentSnapshot document){
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     //TODO Faire un stream builder qui va chercher en temps réel en base les plats.
     //TODO Afficher les plats dans des cards en bas de la map..
     //TODO pour chaque plat, aller chercher l'utilisateur , puis mettre Lat/Lng dans une List<Marker>. Autre StreamBuilder??
@@ -37,34 +37,46 @@ class WhatIsNearMePageState extends State<WhatIsNearMePage> {
             children: <Widget>[
               SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              ),
-               SizedBox(width: 10.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  )),
+              SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              ),
-               SizedBox(width: 10.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  )),
+              SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              ),
-               SizedBox(width: 10.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  )),
+              SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              ),
-               SizedBox(width: 10.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  )),
+              SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              ),
-               SizedBox(width: 10.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  )),
+              SizedBox(width: 10.0),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(child: Center(child: Text("Cards with markers linked to them")),)
-              )
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: Center(
+                        child: Text("Cards with markers linked to them")),
+                  ))
             ],
           )),
     );
@@ -108,6 +120,9 @@ class WhatIsNearMePageState extends State<WhatIsNearMePage> {
             _listDishes(),
           ],
         ),
-        drawer:MiamityAppBar(auth: widget.auth,onSignedOut: widget.onSignedOut,));
+        endDrawer: MiamityAppBar(
+          auth: widget.auth,
+          onSignedOut: widget.onSignedOut,
+        ));
   }
 }

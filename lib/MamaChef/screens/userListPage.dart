@@ -134,7 +134,7 @@ class _UserListState extends State<UserList> {
               }),
         ],
       ),
-      drawer: MiamityAppBar(
+      endDrawer: MiamityAppBar(
         auth: widget.auth,
         onSignedOut: widget.onSignedOut,
       ),

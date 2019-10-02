@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Miamity',
-      theme: ThemeData(primarySwatch: Colors.orange),
+      theme: ThemeData(primarySwatch: Colors.orange, fontFamily: 'Raleway'),
       home: RootPage(auth: new Auth()),
     );
   }

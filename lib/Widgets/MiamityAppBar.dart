@@ -33,7 +33,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
         title: Text(s),
         onTap: () {
           setState(() {
-           widget.auth.changePage(context, route);
+            widget.auth.changePage(context, route);
           });
         },
       );
@@ -43,8 +43,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
       try {
         widget.auth.signOut();
         widget.onSignedOut();
-        widget.auth.changePage(context,
-            RootPage(auth: widget.auth));
+        widget.auth.changePage(context, RootPage(auth: widget.auth));
       } catch (e) {
         print(e);
       }

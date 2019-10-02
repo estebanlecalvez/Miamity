@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:miamitymds/MamaChef/screens/showUserPage.dart';
-import 'package:miamitymds/Utils/Transitions/NoPageTransition.dart';
+import 'package:miamitymds/Widgets/commons/ShowDishesDetails.dart';
+import 'package:miamitymds/auth.dart';
 
 class DishesCardWidget extends StatefulWidget {
-  DishesCardWidget({this.document});
+  DishesCardWidget({this.document, this.auth, this.onSignedOut});
   final DocumentSnapshot document;
+  final BaseAuth auth;
+  final VoidCallback onSignedOut;
   @override
   createState() => DishesCardState();
 }
@@ -15,11 +17,14 @@ class DishesCardState extends State<DishesCardWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          Navigator.push(
+          widget.auth.changePage(
               context,
-              NoPageTransition(
-                  builder: (context) =>
-                      ShowUserPage(document: widget.document)));
+              ShowDishesDetailsPage(
+                document: widget.document,
+                auth: widget.auth,
+                onSignedOut: widget.onSignedOut,
+                authorDishId: widget.document['user_id'],
+              ));
         },
         child: Card(
           borderOnForeground: true,
@@ -58,9 +63,6 @@ class DishesCardState extends State<DishesCardWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      // Padding(
-                      //   padding: EdgeInsets.only(right: 5, left: 5),
-                      // ),
                       Flexible(
                           child: Center(
                         child: Text(

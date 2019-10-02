@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/DishesList.dart';
-import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/myAccountPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/auth.dart';
-import 'package:miamitymds/root_page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,7 +21,10 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Accueil"),
+        title: Container(
+          padding: EdgeInsets.only(left: 40),
+          child: Center(child: Text("Accueil")),
+        ),
       ),
       body: Container(
           child: Center(
@@ -84,17 +85,14 @@ class HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 MiamityButton(
-                  title: "JE REGARDE LES PLATS PROCHE DE MOI",
-                  onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DishesListPage(
-                                )),
-                      );
-                    }
-                ),
+                    title: "JE REGARDE LES PLATS PROCHE DE MOI",
+                    onPressed: () {
+                      widget.auth.changePage(
+                          context,
+                          DishesListPage(
+                              auth: widget.auth,
+                              onSignedOut: widget.onSignedOut));
+                    }),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
@@ -127,9 +125,9 @@ class HomeScreenState extends State<HomeScreen> {
           ],
         ),
       )),
-
       // Set the nav drawer
-      drawer: MiamityAppBar(auth: widget.auth, onSignedOut: widget.onSignedOut),
+      endDrawer:
+          MiamityAppBar(auth: widget.auth, onSignedOut: widget.onSignedOut),
     );
   }
 }
