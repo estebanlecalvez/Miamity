@@ -35,14 +35,14 @@ class MiamityRangeDate extends StatelessWidget {
                   borderSide: new BorderSide(),
                 ),
               ),
-              format: DateFormat("dd/MM/yyyy - hh:mm:ss"),
+              format: DateFormat("dd/MM/yyyy - HH'h'mm"),
             ),
           ),
           Padding(
             padding: EdgeInsets.all(6.0),
             child: FormBuilderDateTimePicker(
               attribute: attribute2,
-              format: DateFormat("dd/MM/yyyy - hh:mm:ss"),
+              format: DateFormat("dd/MM/yyyy - HH'h'mm"),
               decoration: new InputDecoration(
                 labelText: label2 ?? "",
                 alignLabelWithHint: true,
