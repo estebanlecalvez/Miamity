@@ -12,14 +12,12 @@ import 'package:intl/intl.dart';
 import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:camera/camera.dart';
-import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
 import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityMultiSelect.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
-import 'package:miamitymds/Widgets/MiamityTextField.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -99,7 +97,7 @@ class _AddPlateState extends State<AddPlate> {
     message = "";
     _isLoading = false;
     isSuccess = true;
-    if (widget.image != null) {
+    if (widget.image != null && sampleImage == null) {
       isAnImage = true;
       setState(() {
         sampleImage = widget.image;
@@ -158,12 +156,13 @@ class _AddPlateState extends State<AddPlate> {
   Future getImage() async {
     _openFileExplorer();
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print(tempImage.path);
     if (tempImage != null) {
       File croppedFile = await ImageCropper.cropImage(
         sourcePath: tempImage.path,
-        ratioX: 1.0,
+        ratioX: 1.3,
         ratioY: 1.0,
-        maxWidth: 600,
+        maxWidth: 400,
         maxHeight: 400,
       );
       setState(() {
