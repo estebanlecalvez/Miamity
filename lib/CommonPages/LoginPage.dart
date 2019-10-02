@@ -1,8 +1,10 @@
 import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:miamitymds/CommonPages/RegisterPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/Widgets/PageTitle.dart';
@@ -19,7 +21,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _email;
@@ -31,9 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   bool validateAndSave() {
-    final form = formKey.currentState;
-    if (form.validate()) {
-      form.save();
+    if (formKey.currentState.saveAndValidate()) {
       return true;
     } else {
       return false;
@@ -46,14 +46,20 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isLoading = true;
         });
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+
+        var form = formKey.currentState.value;
+        var formValues = form.values.toList();
+        await widget.auth
+            .signInWithEmailAndPassword(formValues[0], formValues[1]);
         String userId = await widget.auth.currentUser();
         if (userId != null) {
           print("Signed in as user with id $userId");
           widget.onSignedIn();
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (context) => RootPage(auth: widget.auth,)),
+                  builder: (context) => RootPage(
+                        auth: widget.auth,
+                      )),
               (Route<dynamic> route) => false);
         }
       }
@@ -77,28 +83,36 @@ class _LoginPageState extends State<LoginPage> {
                 opacity: _isLoading ? 0.7 : 1,
                 child: ListView(
                   children: <Widget>[
-                    Form(
+                    FormBuilder(
+                        autovalidate: true,
+                        initialValue: {'email': null, 'password': null},
                         key: formKey,
                         child: Column(
                           children: <Widget>[
                             PageTitle(title: "Se connecter"),
-                            new MiamityTextFormField(
+                            new MiamityFormBuilderTextField(
                               controller: _emailController,
                               icon: Icons.email,
                               label: "Email",
-                              validator: (String value) => value.isEmpty
-                                  ? 'Vous devez entrer votre Email'
-                                  : null,
-                              onSaved: (value) => _email = value,
+                              keyboardType: TextInputType.emailAddress,
+                              attribute: "email",
+                              validators: [
+                                FormBuilderValidators.required(
+                                    errorText: 'Veuillez entrer un email.'),
+                                FormBuilderValidators.max(300),
+                                FormBuilderValidators.email(),
+                              ],
                             ),
-                            new MiamityTextFormField(
+                            new MiamityFormBuilderTextField(
                               controller: _passwordController,
                               label: "Mot de passe",
+                              attribute: "password",
                               icon: Icons.lock,
-                              validator: (String value) => value.isEmpty
-                                  ? 'Vous devez entrer votre mot de passe'
-                                  : null,
-                              onSaved: (value) => _password = value,
+                              validators: [
+                                FormBuilderValidators.required(
+                                    errorText:
+                                        "Veuillez entrer votre mot de passe.")
+                              ],
                               isObscureText: true,
                             ),
                             _smthngIsWrong

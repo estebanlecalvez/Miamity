@@ -17,7 +17,6 @@ class MiamityButton extends StatelessWidget {
       textColor: Colors.white,
       color: btnColor ?? Colors.orange[700],
       child: Container(
-          alignment: Alignment.bottomLeft,
           padding: verticalPadding ?? EdgeInsets.symmetric(vertical: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
