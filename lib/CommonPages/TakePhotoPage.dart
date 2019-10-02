@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/auth.dart';
@@ -10,7 +11,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TakeAPhotoPage extends StatefulWidget {
-  TakeAPhotoPage({this.auth, this.onSignedOut});
+  TakeAPhotoPage({this.auth, this.onSignedOut, this.currentForm});
+  final FormBuilderState currentForm;
   final BaseAuth auth;
   final VoidCallback onSignedOut;
   @override
@@ -105,7 +107,11 @@ class _TakeAPhotoPageState extends State<TakeAPhotoPage> {
         context,
         MaterialPageRoute(
           builder: (context) => AddPlate(
-              auth: widget.auth, onSignedOut: widget.onSignedOut, image: image),
+            auth: widget.auth,
+            onSignedOut: widget.onSignedOut,
+            image: image,
+            currentForm: widget.currentForm,
+          ),
         ),
       );
     } catch (e) {

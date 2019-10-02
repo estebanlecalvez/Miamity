@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:camera/camera.dart';
@@ -17,18 +17,20 @@ import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityMultiSelect.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
+import 'package:miamitymds/Widgets/MiamityRangeDate.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Dish {
-  List<DateTime> date;
+  DateTime dateBegin, dateEnding;
   String locally, dishTitle, description, price;
   int nbParts;
 
   Dish(
-      {this.date,
+      {this.dateBegin,
+      this.dateEnding,
       this.dishTitle,
       this.description,
       this.locally,
@@ -39,7 +41,8 @@ class Dish {
 
 Dish _formFieldFromJson(Map<String, dynamic> json) {
   return Dish(
-      date: json['date'] as List<DateTime>,
+      dateBegin: json['dateBegin'] as DateTime,
+      dateEnding: json['dateEnding'] as DateTime,
       dishTitle: json['dishTitle'] as String,
       description: json['description'] as String,
       locally: json['locally'] as String,
@@ -48,10 +51,12 @@ Dish _formFieldFromJson(Map<String, dynamic> json) {
 }
 
 class AddPlate extends StatefulWidget {
-  AddPlate({this.title, this.auth, this.onSignedOut, this.image});
+  AddPlate(
+      {this.title, this.auth, this.onSignedOut, this.image, this.currentForm});
   final String title;
   final BaseAuth auth;
   final VoidCallback onSignedOut;
+  final FormBuilderState currentForm;
   final File image;
   @override
   _AddPlateState createState() => _AddPlateState();
@@ -190,7 +195,8 @@ class _AddPlateState extends State<AddPlate> {
             "description": dish.description,
             "price": dish.price,
             "nb_parts": dish.nbParts,
-            "date": dish.date,
+            "dateBegin": dish.dateBegin,
+            "dateEnding": dish.dateEnding,
             "locally": dish.locally,
             "types": selectedTypesList
           })
@@ -275,14 +281,17 @@ class _AddPlateState extends State<AddPlate> {
                     ),
                     FormBuilder(
                         key: formKey,
-                        initialValue: {
-                          'date': [DateTime.now(), DateTime.now()],
-                          'locally': null,
-                          'nbParts': 1,
-                          'dishTitle': null,
-                          'description': null,
-                          'price': null
-                        },
+                        initialValue: widget.currentForm != null
+                            ? widget.currentForm.value
+                            : {
+                                'dateBegin': DateTime.now(),
+                                'dateEnding': DateTime.now(),
+                                'locally': null,
+                                'nbParts': 1,
+                                'dishTitle': null,
+                                'description': null,
+                                'price': null
+                              },
                         autovalidate: true,
                         child: Column(
                           children: <Widget>[
@@ -339,29 +348,17 @@ class _AddPlateState extends State<AddPlate> {
                                         "La valeur ne doit pas comprendre de lettres")
                               ],
                             ),
-                            Padding(
-                                padding: EdgeInsets.all(6.0),
-                                child: FormBuilderDateRangePicker(
-                                  firstDate: DateTime.now()
-                                      .subtract(new Duration(days: 1)),
-                                  lastDate: DateTime.now()
-                                      .add(new Duration(days: 50)),
-                                  format: DateFormat("dd/MM/yyyy"),
-                                  attribute: 'date',
-                                  decoration: InputDecoration(
-                                    labelText: 'Heure de disponibilité',
-                                    prefixIcon: Icon(Icons.calendar_today),
-                                    alignLabelWithHint: true,
-                                    border: new OutlineInputBorder(
-                                        borderSide: new BorderSide(),
-                                        borderRadius: new BorderRadius.all(
-                                            Radius.circular(50))),
-                                  ),
-                                  validators: [
-                                    FormBuilderValidators.required(
-                                        errorText: 'Le champs est requis'),
-                                  ],
-                                )),
+                            Text(
+                              "Période de mise à disposition de votre plat",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            MiamityRangeDate(
+                                attribute1: "dateBegin",
+                                label1: "Date de début",
+                                attribute2: "dateEnding",
+                                label2: "Date de fin"),
                             Padding(
                                 padding: EdgeInsets.all(6.0),
                                 child: FormBuilderDropdown(
@@ -413,9 +410,12 @@ class _AddPlateState extends State<AddPlate> {
                                 },
                                 title2: "JE PREND UNE PHOTO",
                                 onPressed2: () {
+                                  formKey.currentState.save();
+                                  formKey.currentState.saveAndValidate();
                                   widget.auth.changePage(
                                       context,
                                       TakeAPhotoPage(
+                                        currentForm: formKey.currentState,
                                         auth: widget.auth,
                                         onSignedOut: widget.onSignedOut,
                                       ));
