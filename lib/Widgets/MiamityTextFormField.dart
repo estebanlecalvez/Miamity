@@ -39,7 +39,7 @@ class MiamityTextFormField extends StatelessWidget {
         onTap: onTap,
         readOnly: readOnly ?? false,
         decoration: new InputDecoration(
-          labelText: icon != null ? label : "     $label",
+          labelText: icon != null ? label : "$label",
           alignLabelWithHint: true,
           fillColor: Colors.white,
           prefixIcon: Icon(icon) ?? null,

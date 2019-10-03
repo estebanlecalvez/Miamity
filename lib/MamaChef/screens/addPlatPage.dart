@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:camera/camera.dart';
+import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
 import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
@@ -20,6 +21,7 @@ import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRangeDate.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
+import 'package:miamitymds/Widgets/PreviewDishCard.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -94,11 +96,17 @@ class _AddPlateState extends State<AddPlate> {
     "Boissons",
   ];
   List<String> selectedTypesList;
+  String name;
+  String price;
+  String part;
+  var formField;
+  Dish dish;
 
   @override
   void initState() {
     super.initState();
     // Obtain a list of the available cameras on the device.
+
     message = "";
     _isLoading = false;
     isSuccess = true;
@@ -184,8 +192,8 @@ class _AddPlateState extends State<AddPlate> {
       if (sampleImage != null) {
         await uploadImage();
       }
-      var formField = formKey.currentState.value;
-      Dish dish = Dish.fromJson(formField);
+      formField = formKey.currentState.value;
+      dish = Dish.fromJson(formField);
       Firestore.instance
           .collection('dish')
           .add({
@@ -258,6 +266,19 @@ class _AddPlateState extends State<AddPlate> {
     return choices;
   }
 
+  _ApercuDuPlat() {
+    if (formKey.currentState != null) {
+      formKey.currentState.save();
+      setState(() {
+        formField = formKey.currentState.value;
+        dish = Dish.fromJson(formField);
+        name = dish.dishTitle;
+        part = dish.nbParts.toString();
+        price = dish.price.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -280,6 +301,7 @@ class _AddPlateState extends State<AddPlate> {
                       },
                     ),
                     FormBuilder(
+                        onChanged: _ApercuDuPlat(),
                         key: formKey,
                         initialValue: widget.currentForm != null
                             ? widget.currentForm.value
@@ -401,57 +423,33 @@ class _AddPlateState extends State<AddPlate> {
                     Container(
                         child: Row(
                       children: <Widget>[
-                        sampleImage == null || widget.image == null
-                            ? MiamityDoubleButton(
-                                btnColor1: Colors.blue,
-                                title1: "JE CHOISIS UNE PHOTO",
-                                onPressed1: () async {
-                                  getImage();
-                                },
-                                title2: "JE PREND UNE PHOTO",
-                                onPressed2: () {
-                                  formKey.currentState.save();
-                                  formKey.currentState.saveAndValidate();
-                                  widget.auth.changePage(
-                                      context,
-                                      TakeAPhotoPage(
-                                        currentForm: formKey.currentState,
-                                        auth: widget.auth,
-                                        onSignedOut: widget.onSignedOut,
-                                      ));
-                                },
-                              )
-                            : Row(
-                                children: <Widget>[
-                                  Container(
-                                      padding: EdgeInsets.all(10.0),
-                                      child: Image.file(sampleImage,
-                                          height: 100, width: 100)),
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      MiamityGreenButton(
-                                          title: "CHANGER",
-                                          onPressed: () async {
-                                            getImage();
-                                          }),
-                                      Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 5.0)),
-                                      MiamityRedButton(
-                                          title: "SUPPRIMER",
-                                          onPressed: () {
-                                            setState(() {
-                                              sampleImage = null;
-                                            });
-                                          }),
-                                    ],
-                                  ),
-                                ],
-                              )
+                        MiamityDoubleButton(
+                          btnColor1: Colors.blue,
+                          title1: "JE CHOISIS UNE PHOTO",
+                          onPressed1: () async {
+                            getImage();
+                          },
+                          title2: "JE PREND UNE PHOTO",
+                          onPressed2: () {
+                            formKey.currentState.save();
+                            formKey.currentState.saveAndValidate();
+                            widget.auth.changePage(
+                                context,
+                                TakeAPhotoPage(
+                                  currentForm: formKey.currentState,
+                                  auth: widget.auth,
+                                  onSignedOut: widget.onSignedOut,
+                                ));
+                          },
+                        )
                       ],
                     )),
+                    Center(
+                        child: PreviewDishCard(
+                            image: sampleImage,
+                            name: name,
+                            nombrePart: part,
+                            price: price)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
