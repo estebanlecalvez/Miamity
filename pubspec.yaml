@@ -35,6 +35,9 @@ dependencies:
   camera:  
   path:
   path_provider: ^1.3.0
+  dash_chat:
+  cached_network_image:
+  shared_preferences:
   flutter:
     sdk: flutter
 

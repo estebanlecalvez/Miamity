@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miamitymds/CommonPages/LoginPage.dart';
+import 'package:miamitymds/CommonPages/MessagesPage.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
@@ -33,7 +33,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
         title: Text(s),
         onTap: () {
           setState(() {
-           widget.auth.changePage(context, route);
+            widget.auth.changePage(context, route);
           });
         },
       );
@@ -43,8 +43,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
       try {
         widget.auth.signOut();
         widget.onSignedOut();
-        widget.auth.changePage(context,
-            RootPage(auth: widget.auth));
+        widget.auth.changePage(context, RootPage(auth: widget.auth));
       } catch (e) {
         print(e);
       }
@@ -107,6 +106,8 @@ class MiamityAppBarState extends State<MiamityAppBar> {
             auth: widget.auth,
             onSignedOut: widget.onSignedOut,
           )),
+      getNavItem(Icons.message, "Mes messages",
+          MessagesPage(auth: widget.auth, onSignedOut: widget.onSignedOut)),
       aboutChild,
 
       getSignOutItem() // getNavItem(Icons.account_box, "Account", AccountScreen.routeName),
