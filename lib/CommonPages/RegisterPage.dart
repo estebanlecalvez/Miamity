@@ -9,11 +9,13 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:miamitymds/CommonPages/LoginPage.dart';
+import 'package:miamitymds/Widgets/MiamityAllergenicInfo.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
+import 'package:miamitymds/Widgets/MiamityDisabledTextFormField.dart';
 import 'package:miamitymds/Widgets/PageTitle.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:miamitymds/root_page.dart';
@@ -54,12 +56,15 @@ class _RegisterPageState extends State<RegisterPage> {
   double latitude;
   String _errorMessage;
   String _encryptedPassword;
+  bool isAllergic;
+  String _allergenic;
 
   @override
   initState() {
     imageURL = "";
     waitingForUploadImage = false;
     isAddressSelected = false;
+    isAllergic = false;
     longitude = null;
     latitude = null;
     sampleImage = null;
@@ -80,6 +85,24 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       sampleImage = croppedFile;
     });
+  }
+
+  _showTypeAllergenicDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return AlertDialog();
+        });
+  }
+
+  _showInfoAllergenicDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return MiamityAllergenicInfo();
+        });
   }
 
   validateForm() {
@@ -182,6 +205,7 @@ class _RegisterPageState extends State<RegisterPage> {
           "address": selectedAddress,
           "latitude": latitude,
           "longitude": longitude,
+          "alergenic": _allergenic,
         })
         .then((result) => {
               Navigator.push(
@@ -331,6 +355,33 @@ class _RegisterPageState extends State<RegisterPage> {
                               _userPasswordConfirmation = value,
                           onSaved: (value) =>
                               _userPasswordConfirmation = value),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text("J'ai des allergènes"),
+                          Checkbox(
+                            value: isAllergic,
+                            onChanged: (bool value) {
+                              setState(() {
+                                isAllergic = value;
+                              });
+                            },
+                          ),
+                          IconButton(
+                              icon: Icon(Icons.info_outline),
+                              onPressed: _showInfoAllergenicDialog)
+                        ],
+                      ),
+                      isAllergic
+                          ? MiamityDisabledTextFormField(
+                              icon: Icons.assignment_late,
+                              label: 'Allergenic*',
+                              validator: (String value) => value.isEmpty
+                                  ? 'Vous devez renseigner vos allergènes.'
+                                  : null,
+                              disabled: isAllergic,
+                              onSaved: (value) => _allergenic = value)
+                          : Container(),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                       )
