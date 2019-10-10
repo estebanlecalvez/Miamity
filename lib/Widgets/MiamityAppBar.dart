@@ -61,15 +61,14 @@ class MiamityAppBarState extends State<MiamityAppBar> {
 
     var myNavChildren = [
       DrawerHeader(
-        child: CircleAvatar(
-          child: Icon(
-            Icons.restaurant,
-          ),
-          backgroundColor: Colors.green,
-        ),
-        decoration: BoxDecoration(),
-      ),
-      // getNavItem(Icons.settings, "Settings", SettingsScreen.routeName),
+          child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image(
+                    image: new AssetImage('images/MiamityLogo.png'),
+                    fit: BoxFit.fitWidth),
+              ))),
       getNavItem(
           Icons.home,
           "Accueil",

@@ -84,15 +84,12 @@ class HomeScreenState extends State<HomeScreen> {
                 MiamityButton(
                     title: "JE REGARDE LES PLATS PROCHE DE MOI",
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DishesListPage(
-                                  auth: widget.auth,
-                                  onSignedOut: widget.onSignedOut,
-                                )),
-                      );
+                      widget.auth.changePage(
+                          context,
+                          DishesListPage(
+                            auth: widget.auth,
+                            onSignedOut: widget.onSignedOut,
+                          ));
                     }),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
