@@ -15,7 +15,7 @@ class _MiamityMultiSelectState extends State<MiamityMultiSelect> {
     List<Widget> choices = List();
     widget.reportList.forEach((item) {
       choices.add(Container(
-        padding: const EdgeInsets.all(2.0),
+        padding: EdgeInsets.all(2),
         child: ChoiceChip(
           label: Text(item),
           selected: selectedChoices.contains(item),
@@ -24,7 +24,7 @@ class _MiamityMultiSelectState extends State<MiamityMultiSelect> {
               selectedChoices.contains(item)
                   ? selectedChoices.remove(item)
                   : selectedChoices.add(item);
-              widget.onSelectionChanged(selectedChoices); // +added
+              widget.onSelectionChanged(selectedChoices);
             });
           },
         ),
@@ -36,14 +36,8 @@ class _MiamityMultiSelectState extends State<MiamityMultiSelect> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // La moitié de la taille de l'écran.
-      height: MediaQuery.of(context).size.height / 2,
-      child: ListView(
-        children: <Widget>[
-          Wrap(
-            children: _buildChoiceList(),
-          ),
-        ],
+      child: Wrap(
+        children: _buildChoiceList(),
       ),
     );
   }
