@@ -81,7 +81,7 @@ class ChatScreenState extends State<ChatScreen> {
     super.initState();
     focusNode.addListener(onFocusChange);
 
-    groupChatId = '';
+    groupChatId = null;
 
     isLoading = false;
     isShowSticker = false;
@@ -103,9 +103,13 @@ class ChatScreenState extends State<ChatScreen> {
     prefs = await SharedPreferences.getInstance();
     id = await widget.auth.currentUser();
     if (id.hashCode <= peerId.hashCode) {
-      groupChatId = '$id-$peerId';
+      this.setState(() {
+        groupChatId = '$id-$peerId';
+      });
     } else {
-      groupChatId = '$peerId-$id';
+      this.setState(() {
+        groupChatId = '$peerId-$id';
+      });
     }
 
     Firestore.instance
@@ -114,43 +118,43 @@ class ChatScreenState extends State<ChatScreen> {
         .updateData({'chattingWith': peerId});
   }
 
-  Future getImage() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+  // Future getImage() async {
+  //   imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (imageFile != null) {
-      setState(() {
-        isLoading = true;
-      });
-      uploadFile();
-    }
-  }
+  //   if (imageFile != null) {
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //     uploadFile();
+  //   }
+  // }
 
-  void getSticker() {
-    // Hide keyboard when sticker appear
-    focusNode.unfocus();
-    setState(() {
-      isShowSticker = !isShowSticker;
-    });
-  }
+  // void getSticker() {
+  //   // Hide keyboard when sticker appear
+  //   focusNode.unfocus();
+  //   setState(() {
+  //     isShowSticker = !isShowSticker;
+  //   });
+  // }
 
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-      imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      print('This file is not an image');
-    });
-  }
+  // Future uploadFile() async {
+  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //   StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+  //   StorageUploadTask uploadTask = reference.putFile(imageFile);
+  //   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+  //   storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+  //     imageUrl = downloadUrl;
+  //     setState(() {
+  //       isLoading = false;
+  //       onSendMessage(imageUrl, 1);
+  //     });
+  //   }, onError: (err) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     print('This file is not an image');
+  //   });
+  // }
 
   void onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
@@ -446,9 +450,6 @@ class ChatScreenState extends State<ChatScreen> {
               buildInput(),
             ],
           ),
-
-          // Loading
-          buildLoading()
         ],
       ),
     );
@@ -584,30 +585,31 @@ class ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: <Widget>[
           // Button send image
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.image),
-                onPressed: getImage,
-              ),
-            ),
-            color: Colors.white,
-          ),
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.face),
-                onPressed: getSticker,
-              ),
-            ),
-            color: Colors.white,
-          ),
+          // Material(
+          //   child: new Container(
+          //     margin: new EdgeInsets.symmetric(horizontal: 1.0),
+          //     child: new IconButton(
+          //       icon: new Icon(Icons.image),
+          //       onPressed: getImage,
+          //     ),
+          //   ),
+          //   color: Colors.white,
+          // ),
+          // Material(
+          //   child: new Container(
+          //     margin: new EdgeInsets.symmetric(horizontal: 1.0),
+          //     child: new IconButton(
+          //       icon: new Icon(Icons.face),
+          //       onPressed: getSticker,
+          //     ),
+          //   ),
+          //   color: Colors.white,
+          // ),
 
           // Edit text
           Flexible(
             child: Container(
+              padding: EdgeInsets.only(left: 10),
               child: TextField(
                 style: TextStyle(fontSize: 15.0),
                 controller: textEditingController,
@@ -644,7 +646,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildListMessage() {
     return Flexible(
-      child: groupChatId == ''
+      child: groupChatId == null
           ? Center(child: MiamityProgressIndicator())
           : StreamBuilder(
               stream: Firestore.instance
