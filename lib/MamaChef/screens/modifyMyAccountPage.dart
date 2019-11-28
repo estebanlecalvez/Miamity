@@ -239,6 +239,7 @@ class _ModifyMyAccountPageState extends State<ModifyMyAccountPage> {
     return new Scaffold(
       appBar: AppBar(
         title: Text("Modifier mon compte"),
+        centerTitle: true,
       ),
       body: ListView(children: <Widget>[
         Form(

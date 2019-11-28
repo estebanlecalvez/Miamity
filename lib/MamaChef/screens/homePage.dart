@@ -21,10 +21,8 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Container(
-          padding: EdgeInsets.only(left: 40),
-          child: Center(child: Text("Accueil")),
-        ),
+        title: Text("Accueil"),
+        centerTitle: true,
       ),
       body: Container(
           child: Center(
@@ -32,27 +30,29 @@ class HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                FlatButton(
-                  child: Text("getUserId"),
-                  onPressed: () async {
-                    String userId = await widget.auth.currentUser();
-                    print("Current user id : $userId");
-                  },
-                ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: FadeInImage.memoryNetwork(
-                    height: 200,
-                    width: 200,
-                    placeholder: kTransparentImage,
-                    fadeInDuration: const Duration(seconds: 1),
-                    fit: BoxFit.cover,
-                    image:
-                        "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
+                GestureDetector(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: FadeInImage.memoryNetwork(
+                      height: 200,
+                      width: 200,
+                      placeholder: kTransparentImage,
+                      fadeInDuration: const Duration(seconds: 1),
+                      fit: BoxFit.cover,
+                      image:
+                          "https://journalmetro.com/wp-content/uploads/2014/05/carriecc80res_chef-cuisinier_c100.jpg?w=860",
+                    ),
                   ),
+                  onTap: () async {
+                    widget.auth.changePage(
+                        context,
+                        AddPlate(
+                            auth: widget.auth,
+                            onSignedOut: widget.onSignedOut));
+                  },
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -69,17 +69,26 @@ class HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: FadeInImage.memoryNetwork(
-                    height: 200,
-                    width: 200,
-                    placeholder: kTransparentImage,
-                    fadeInDuration: const Duration(seconds: 1),
-                    fit: BoxFit.cover,
-                    image:
-                        "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
+                GestureDetector(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: FadeInImage.memoryNetwork(
+                      height: 200,
+                      width: 200,
+                      placeholder: kTransparentImage,
+                      fadeInDuration: const Duration(seconds: 1),
+                      fit: BoxFit.cover,
+                      image:
+                          "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
+                    ),
                   ),
+                  onTap: () async {
+                    widget.auth.changePage(
+                        context,
+                        DishesListPage(
+                            auth: widget.auth,
+                            onSignedOut: widget.onSignedOut));
+                  },
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -96,30 +105,6 @@ class HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: FadeInImage.memoryNetwork(
-                    height: 200,
-                    width: 200,
-                    placeholder: kTransparentImage,
-                    fadeInDuration: const Duration(seconds: 1),
-                    fit: BoxFit.cover,
-                    image:
-                        "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                ),
-                MiamityButton(
-                    title: "JE MODIFIE MON COMPTE",
-                    onPressed: () {
-                      widget.auth.changePage(
-                          context,
-                          MyAccountPage(
-                              auth: widget.auth,
-                              onSignedOut: widget.onSignedOut));
-                    }),
               ],
             )
           ],

@@ -101,6 +101,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     return new Scaffold(
       appBar: AppBar(
         title: Text("Mon compte"),
+        centerTitle: true,
       ),
       body: isThereAUser
           ? ListView(children: <Widget>[

@@ -275,7 +275,7 @@ class _AddPlateState extends State<AddPlate> {
           return AlertDialog(
             title: Text("Type(s) du plat"),
             content: Container(
-              width:double.maxFinite,
+              width: double.maxFinite,
               child: ListView(
                 children: <Widget>[
                   MiamityMultiSelect(
@@ -332,6 +332,7 @@ class _AddPlateState extends State<AddPlate> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Ajouter un plat"),
+        centerTitle: true,
       ),
       body: PageView(
         children: <Widget>[
@@ -341,13 +342,6 @@ class _AddPlateState extends State<AddPlate> {
                 opacity: _isLoading ? 0.7 : 1.0,
                 child: ListView(
                   children: <Widget>[
-                    FlatButton(
-                      child: Text("getUserId"),
-                      onPressed: () async {
-                        String userId = await widget.auth.currentUser();
-                        print("Current user id : $userId");
-                      },
-                    ),
                     FormBuilder(
                         onChanged: _ApercuDuPlat(),
                         key: formKey,

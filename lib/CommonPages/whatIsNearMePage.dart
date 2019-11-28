@@ -113,6 +113,7 @@ class WhatIsNearMePageState extends State<WhatIsNearMePage> {
     return new Scaffold(
         appBar: AppBar(
           title: Text("Maps"),
+          centerTitle: true,
         ),
         body: Stack(
           children: <Widget>[

@@ -167,7 +167,10 @@ class _ConsultMyDishesState extends State<ConsultMyDishes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Mes plats")),
+      appBar: AppBar(
+        title: Text("Mes plats"),
+        centerTitle: true,
+      ),
       body: PageView(
         children: <Widget>[
           StreamBuilder(

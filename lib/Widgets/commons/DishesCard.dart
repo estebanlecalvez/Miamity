@@ -27,7 +27,7 @@ class DishesCardState extends State<DishesCardWidget> {
             ));
       },
       child: Card(
-        elevation: 10,
+          elevation: 10,
           borderOnForeground: true,
           //Container principal(entier)
           child: Container(

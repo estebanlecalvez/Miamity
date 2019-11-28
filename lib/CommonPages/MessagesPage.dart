@@ -80,6 +80,7 @@ class _MessagePageState extends State<MessagesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Mes messages"),
+        centerTitle: true,
       ),
       body: Container(
         child: StreamBuilder(

@@ -124,6 +124,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Détails du plat'),
+        centerTitle: true,
       ),
       body: ListView(
         children: <Widget>[

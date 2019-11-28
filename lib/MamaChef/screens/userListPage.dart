@@ -116,7 +116,10 @@ class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Liste des utilisateurs")),
+      appBar: AppBar(
+        title: Text("Liste des utilisateurs"),
+        centerTitle: true,
+      ),
       body: PageView(
         children: <Widget>[
           StreamBuilder(

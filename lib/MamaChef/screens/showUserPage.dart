@@ -12,6 +12,7 @@ class ShowUserPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(document["firstname"] + " " + document["lastname"]),
+        centerTitle: true,
       ),
       body: PageView(
         children: <Widget>[

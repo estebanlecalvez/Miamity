@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/MessagesPage.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
+import 'package:miamitymds/CommonPages/DishesList.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
 import 'package:miamitymds/MamaChef/screens/myAccountPage.dart';
-import 'package:miamitymds/MamaChef/screens/userListPage.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:miamitymds/root_page.dart';
 
@@ -90,18 +90,14 @@ class MiamityAppBarState extends State<MiamityAppBar> {
             auth: widget.auth,
             onSignedOut: widget.onSignedOut,
           )),
-      // getNavItem(Icons.restaurant, "Historique",),
-      getNavItem(
-          Icons.person,
-          "Liste des utilisateurs",
-          UserList(
-            auth: widget.auth,
-            onSignedOut: widget.onSignedOut,
-          )),
+      // getNavItem(
+      //   Icons.restaurant,
+      //   "Historique",
+      // ),
       getNavItem(
           Icons.map,
           "Plats proche de moi",
-          WhatIsNearMePage(
+          DishesListPage(
             auth: widget.auth,
             onSignedOut: widget.onSignedOut,
           )),

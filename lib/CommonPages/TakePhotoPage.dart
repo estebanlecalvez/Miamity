@@ -139,7 +139,10 @@ class _TakeAPhotoPageState extends State<TakeAPhotoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Prendre une photo")),
+      appBar: AppBar(
+        title: Text("Prendre une photo"),
+        centerTitle: true,
+      ),
       body: _cameraPreviewWidget(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.photo_camera),

@@ -155,6 +155,7 @@ class DishesListState extends State<DishesListPage> {
                 _filterResults(context);
               }),
         ],
+        centerTitle: true,
       ),
       body: PageView(
         children: <Widget>[
@@ -171,7 +172,7 @@ class DishesListState extends State<DishesListPage> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 5,
-                      childAspectRatio: 9.0 / 13.0,
+                      childAspectRatio: 9.0 / 15.0,
                       mainAxisSpacing: 10),
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index) => DishesCardWidget(
