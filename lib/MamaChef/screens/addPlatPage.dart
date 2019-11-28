@@ -92,6 +92,48 @@ class _AddPlateState extends State<AddPlate> {
     "Viande",
     "Desserts",
     "Fondues",
+    "Accompagnements",
+    "Amuse bouches",
+    "Pains",
+    "Pâtés",
+    "Pâtes alimentaires",
+    "Petits-déjeuners",
+    "Plat principal",
+    "Poissons",
+    "Salades",
+    "Sandwiches",
+    "Soupes",
+    "Viande",
+    "Desserts",
+    "Fondues",
+    "Accompagnements",
+    "Amuse bouches",
+    "Pains",
+    "Pâtés",
+    "Pâtes alimentaires",
+    "Petits-déjeuners",
+    "Plat principal",
+    "Poissons",
+    "Salades",
+    "Sandwiches",
+    "Soupes",
+    "Viande",
+    "Desserts",
+    "Fondues",
+    "Accompagnements",
+    "Amuse bouches",
+    "Pains",
+    "Pâtés",
+    "Pâtes alimentaires",
+    "Petits-déjeuners",
+    "Plat principal",
+    "Poissons",
+    "Salades",
+    "Sandwiches",
+    "Soupes",
+    "Viande",
+    "Desserts",
+    "Fondues",
     "Fritures",
     "Boissons",
   ];
@@ -231,15 +273,21 @@ class _AddPlateState extends State<AddPlate> {
         builder: (BuildContext context) {
           //Here we will build the content of the dialog
           return AlertDialog(
-            contentPadding: EdgeInsets.all(5),
             title: Text("Type(s) du plat"),
-            content: MiamityMultiSelect(
-              typeList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedTypesList = selectedList;
-                });
-              },
+            content: Container(
+              width:double.maxFinite,
+              child: ListView(
+                children: <Widget>[
+                  MiamityMultiSelect(
+                    typeList,
+                    onSelectionChanged: (selectedList) {
+                      setState(() {
+                        selectedTypesList = selectedList;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
             actions: <Widget>[
               FlatButton(
