@@ -9,11 +9,13 @@ class ShowDishesDetailsPage extends StatefulWidget {
       {this.document,
       this.auth,
       this.onSignedOut,
+      @required this.rngDistance,
       @required this.authorDishId});
   final DocumentSnapshot document;
   final BaseAuth auth;
   final VoidCallback onSignedOut;
   final String authorDishId;
+  final String rngDistance;
   createState() => ShowDishesDetailsState();
 }
 
@@ -364,7 +366,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                             //TODO Faire le calcul entre la position de l'user actuel et la position du plat.
                             Flexible(
                                 child: Text(
-                              '800 m',
+                              widget.rngDistance,
                               style: TextStyle(
                                   color: Colors.grey[500], fontSize: 30),
                             )),

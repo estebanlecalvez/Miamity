@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:miamitymds/Widgets/commons/ShowDishesDetails.dart';
@@ -13,6 +15,28 @@ class DishesCardWidget extends StatefulWidget {
 }
 
 class DishesCardState extends State<DishesCardWidget> {
+  String distance;
+
+  //Fonction gérant le calcul de la distance
+  _calculateDistance() {
+    var rngDistance = 0;
+    rngDistance = Random().nextInt(2000);
+    if (rngDistance >= 1000) {
+      setState(() {
+        distance = (rngDistance / 1000).floor().toString() +
+            ", " +
+            rngDistance.remainder(1000).toString() +
+            " km";
+      });
+      return this.distance;
+    } else {
+      setState(() {
+        distance = rngDistance.toString() + " m";
+      });
+      return this.distance;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,6 +48,7 @@ class DishesCardState extends State<DishesCardWidget> {
               auth: widget.auth,
               onSignedOut: widget.onSignedOut,
               authorDishId: widget.document['user_id'],
+              rngDistance: this.distance,
             ));
       },
       child: Card(
@@ -86,7 +111,7 @@ class DishesCardState extends State<DishesCardWidget> {
                     children: <Widget>[
                       //Quantité + Localisation
                       Container(
-                        width: 80,
+                        width: 70,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey[200])),
                         child: Column(
@@ -115,19 +140,22 @@ class DishesCardState extends State<DishesCardWidget> {
                       ),
                       //Localisation
                       Container(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.near_me,
-                              size: 20.0,
-                              color: Colors.grey[500],
-                            ),
-                            //TODO Faire le calcul entre la position de l'user actuel et la position du plat.
-                            Text(
-                              '800 m',
-                              style: TextStyle(color: Colors.grey[500]),
-                            )
-                          ],
+                        child: Expanded(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.near_me,
+                                size: 20.0,
+                                color: Colors.grey[500],
+                              ),
+                              Container(
+                                child: Text(
+                                  _calculateDistance(),
+                                  style: TextStyle(color: Colors.grey[500]),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       )
                     ],
