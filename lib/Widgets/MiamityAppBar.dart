@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miamitymds/CommonPages/LoginPage.dart';
+import 'package:miamitymds/CommonPages/MessagesPage.dart';
 import 'package:miamitymds/CommonPages/whatIsNearMePage.dart';
 import 'package:miamitymds/MamaChef/screens/addPlatPage.dart';
 import 'package:miamitymds/MamaChef/screens/homePage.dart';
@@ -61,15 +61,14 @@ class MiamityAppBarState extends State<MiamityAppBar> {
 
     var myNavChildren = [
       DrawerHeader(
-        child: CircleAvatar(
-          child: Icon(
-            Icons.restaurant,
-          ),
-          backgroundColor: Colors.green,
-        ),
-        decoration: BoxDecoration(),
-      ),
-      // getNavItem(Icons.settings, "Settings", SettingsScreen.routeName),
+          child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image(
+                    image: new AssetImage('images/MiamityLogo.png'),
+                    fit: BoxFit.fitWidth),
+              ))),
       getNavItem(
           Icons.home,
           "Accueil",
@@ -106,6 +105,8 @@ class MiamityAppBarState extends State<MiamityAppBar> {
             auth: widget.auth,
             onSignedOut: widget.onSignedOut,
           )),
+      getNavItem(Icons.message, "Mes messages",
+          MessagesPage(auth: widget.auth, onSignedOut: widget.onSignedOut)),
       aboutChild,
 
       getSignOutItem() // getNavItem(Icons.account_box, "Account", AccountScreen.routeName),

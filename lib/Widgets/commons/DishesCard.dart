@@ -111,76 +111,83 @@ class DishesCardState extends State<DishesCardWidget> {
                                   )
                                 ],
                               ),
-                            ),
-                            //Localisation
-                            Container(
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.near_me,
-                                    size: 20.0,
-                                    color: Colors.grey[500],
-                                  ),
-                                  //TODO Faire le calcul entre la position de l'user actuel et la position du plat.
-                                  Text(
-                                    '800 m',
-                                    style: TextStyle(color: Colors.grey[500]),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      //Prix
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[200])),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              Container(
-                                height: 30,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Flexible(
-                                        fit: FlexFit.tight,
-                                        child: Center(
-                                          child: Text(
-                                            widget.document['price'],
-                                            style: TextStyle(
-                                                color: Colors.orange,
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w400),
-                                            overflow: TextOverflow.visible,
-                                          ),
-                                        )),
-                                    Container(
-                                      child: Icon(
-                                        Icons.euro_symbol,
-                                        size: 15,
-                                        color: Colors.orange,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              Text(
+                                widget.document['nb_parts'].toString(),
+                                maxLines: 1,
+                                style: TextStyle(color: Colors.grey[500]),
+                              )
                             ],
                           ),
                         ),
-                      )
-                    ],
+                        //Localisation
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.near_me,
+                                size: 20.0,
+                                color: Colors.grey[500],
+                              ),
+                              //TODO Faire le calcul entre la position de l'user actuel et la position du plat.
+                              Text(
+                                '800 m',
+                                style: TextStyle(color: Colors.grey[500]),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                )),
-              ],
-            ),
-          ),
-        ));
+                  //Prix
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[200])),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            height: 30,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Flexible(
+                                    fit: FlexFit.tight,
+                                    child: Center(
+                                      child: Text(
+                                        widget.document['price'],
+                                        style: TextStyle(
+                                            color: Colors.orange,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w400),
+                                        overflow: TextOverflow.visible,
+                                      ),
+                                    )),
+                                Container(
+                                  child: Icon(
+                                    Icons.euro_symbol,
+                                    size: 15,
+                                    color: Colors.orange,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
   }
 }

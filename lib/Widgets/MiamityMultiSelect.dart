@@ -28,7 +28,7 @@ class _MiamityMultiSelectState extends State<MiamityMultiSelect> {
             });
           },
         ),
-      ));
+      );
     });
     return choices;
   }

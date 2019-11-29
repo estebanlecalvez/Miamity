@@ -44,8 +44,8 @@ class _ConsultMyDishesState extends State<ConsultMyDishes> {
                               placeholder: kTransparentImage,
                               fadeInDuration: const Duration(seconds: 1),
                               fit: BoxFit.cover,
-                              image:
-                                  document["photo"]??"https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
+                              image: document["photo"] ??
+                                  "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
                             ),
                           ),
                         ),
