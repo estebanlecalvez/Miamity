@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:miamitymds/CommonPages/ChatPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/auth.dart';
 
@@ -20,6 +21,8 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
   bool _activeAllergens = true;
   bool _activeInfo = false;
   bool _activeOpinion = false;
+  DocumentSnapshot user;
+  bool isThereAUser;
 
 // Fontions permettant de switch de vues
   void _allergensTab() {
@@ -28,6 +31,32 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
       _activeInfo = false;
       _activeOpinion = false;
     });
+  }
+
+  @override
+  initState() {
+    isUserCharged();
+    super.initState();
+  }
+
+  Future<void> isUserCharged() async {
+    bool result = await widget.auth.isAUserConnected();
+    DocumentSnapshot document = await getUser();
+    setState(() {
+      user = document;
+      isThereAUser = result;
+    });
+  }
+
+  Future<DocumentSnapshot> getUser() async {
+    DocumentSnapshot result = await Firestore.instance
+        .collection("users")
+        .document(widget.authorDishId)
+        .get();
+    setState(() {
+      user = result;
+    });
+    return user;
   }
 
   void _infoTab() {
@@ -121,6 +150,10 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<DocumentSnapshot> streamGetUser = Firestore.instance
+        .collection('users')
+        .document(widget.authorDishId)
+        .snapshots();
     return Scaffold(
       appBar: AppBar(
         title: Text('Détails du plat'),
@@ -150,64 +183,99 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 30, bottom: 20),
+            padding: EdgeInsets.only(bottom: 20),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Icon(
-                  Icons.person,
-                  size: 30,
+                Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.person,
+                      size: 30,
+                    ),
+                    StreamBuilder(
+                      stream: streamGetUser,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        return Text(snapshot.data['username']);
+                      },
+                    ),
+                  ],
                 ),
-                StreamBuilder(
-                  stream: Firestore.instance
-                      .collection('users')
-                      .document(widget.authorDishId)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    return Text(snapshot.data['username']);
-                  },
+                Column(
+                  children: <Widget>[
+                    new Container(
+                      child: new Center(
+                        child: RaisedButton(
+                          padding: EdgeInsets.all(10),
+                          color: Colors.orange,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.message),
+                              Text(
+                                'Contacter',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            widget.auth.changePage(
+                                context,
+                                ChatScreen(
+                                  peerAvatar: user.data["profile_picture"],
+                                  peerId: widget.document["user_id"],
+                                  auth: widget.auth,
+                                  onSignedOut: widget.onSignedOut,
+                                ));
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
           Container(
             padding: EdgeInsets.only(left: 30, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Icon(
-                  Icons.star,
-                  size: 30,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  size: 30,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  size: 30,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  size: 30,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  size: 30,
-                ),
-              ],
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Icon(
+                    Icons.star,
+                    size: 30,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    size: 30,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    size: 30,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    size: 30,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    size: 30,
+                  ),
+                ],
+              ),
             ),
           ),
           Container(
