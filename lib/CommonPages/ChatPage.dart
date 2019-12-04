@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,6 +64,7 @@ class ChatScreenState extends State<ChatScreen> {
   String id;
 
   var listMessage;
+  var logger = Logger();
   String groupChatId;
   SharedPreferences prefs;
 
@@ -181,6 +183,25 @@ class ChatScreenState extends State<ChatScreen> {
             'type': type
           },
         );
+      });
+      DocumentReference user =
+          Firestore.instance.collection('users').document(id);
+      Future<DocumentSnapshot> userSnap = user.get();
+      userSnap.then((response) {
+        var previouslyChattedWith = [];
+        var fromDatabase = response.data["previouslyChattedWith"];
+        // logger.i(fromDatabase);
+        if (fromDatabase != null) {
+          fromDatabase.forEach((userFromDatabase) {
+            previouslyChattedWith.add(userFromDatabase);
+          });
+        }
+        previouslyChattedWith.add({"userId": peerId, "lastMessage": content});
+        var updatedList = previouslyChattedWith;
+        updatedList
+            .removeWhere((userToRemove) => userToRemove["userId"] == peerId);
+        updatedList.add({"userId": peerId, "lastMessage": content});
+        user.updateData({'previouslyChattedWith': previouslyChattedWith});
       });
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);

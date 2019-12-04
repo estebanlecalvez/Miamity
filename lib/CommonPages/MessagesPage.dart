@@ -93,8 +93,11 @@ class _MessagePageState extends State<MessagesPage> {
             } else {
               return ListView.builder(
                 padding: EdgeInsets.all(10.0),
-                itemBuilder: (context, index) =>
-                    _buildListItem(context, snapshot.data.documents[index]),
+                itemBuilder: (context, index) => snapshot.data.documents[index]
+                            ["chattingWith"] !=
+                        null
+                    ? _buildListItem(context, snapshot.data.documents[index])
+                    : null,
                 itemCount: snapshot.data.documents.length,
               );
             }

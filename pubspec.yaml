@@ -37,6 +37,7 @@ dependencies:
   dash_chat:
   cached_network_image:
   shared_preferences:
+  logger: ^0.7.0+2
   flutter:
     sdk: flutter
 
