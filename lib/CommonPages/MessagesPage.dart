@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:miamitymds/CommonPages/ChatPage.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/auth.dart';
@@ -14,65 +15,112 @@ class MessagesPage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagesPage> {
+  DocumentSnapshot currentUser;
+  var logger = Logger();
+  var usersToShow;
+  bool isCharging;
+  @override
+  void initState() {
+    super.initState();
+    this.setState(() {
+      isCharging = true;
+    });
+    getUser();
+  }
+
+  getUser() async {
+    this.setState(() {
+      isCharging = true;
+    });
+    var userId = await widget.auth.currentUser();
+    var user =
+        await Firestore.instance.collection("users").document(userId).get();
+
+    var usersChattedWith = user.data["previouslyChattedWith"];
+    this.setState(() {
+      currentUser = user;
+      usersToShow = usersChattedWith;
+    });
+    logger.i("userChattedWith : " + usersChattedWith.toString());
+    this.setState(() {
+      isCharging = false;
+    });
+  }
+
   _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return Container(
-      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-      child: GestureDetector(
-        onTap: () {
-          widget.auth.changePage(
-              context,
-              ChatScreen(
-                peerAvatar: document["profile_picture"],
-                peerId: document.documentID,
-                auth: widget.auth,
-                onSignedOut: widget.onSignedOut,
-              ));
-        },
-        child: Container(
-          color: Colors.grey[100],
-          padding: EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(right: 30.0),
-                    child: CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                            NetworkImage(document["profile_picture"])),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(document["username"],
-                          style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          "Are you okay mate? please respond.",
-                          style: TextStyle(fontSize: 13),
-                          overflow: TextOverflow.ellipsis,
+    bool showThisUser = false;
+    String lastMessage = "";
+    for (var userToShow in usersToShow) {
+      logger.i("userToShow Id : " +
+          userToShow["userId"].toString() +
+          "actual user id : " +
+          document.documentID.toString());
+      if (userToShow["userId"].toString() == document.documentID.toString()) {
+        logger.i("true");
+        lastMessage = userToShow["lastMessage"];
+        showThisUser = true;
+      }
+    }
+    return showThisUser
+        ? Container(
+            padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+            child: GestureDetector(
+              onTap: () {
+                widget.auth.changePage(
+                    context,
+                    ChatScreen(
+                      peerAvatar: document["profile_picture"],
+                      peerId: document.documentID,
+                      auth: widget.auth,
+                      onSignedOut: widget.onSignedOut,
+                    ));
+              },
+              child: Container(
+                color: Colors.grey[100],
+                padding: EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(right: 30.0),
+                          child: CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  NetworkImage(document["profile_picture"])),
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(document["username"],
+                                style: TextStyle(fontSize: 20)),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              child: Text(
+                                lastMessage,
+                                style: TextStyle(fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
+        : Container();
   }
 
   @override
@@ -86,6 +134,11 @@ class _MessagePageState extends State<MessagesPage> {
         child: StreamBuilder(
           stream: Firestore.instance.collection('users').snapshots(),
           builder: (context, snapshot) {
+            if (isCharging) {
+              return Center(
+                child: MiamityProgressIndicator(),
+              );
+            }
             if (!snapshot.hasData) {
               return Center(
                 child: MiamityProgressIndicator(),
@@ -93,11 +146,8 @@ class _MessagePageState extends State<MessagesPage> {
             } else {
               return ListView.builder(
                 padding: EdgeInsets.all(10.0),
-                itemBuilder: (context, index) => snapshot.data.documents[index]
-                            ["chattingWith"] !=
-                        null
-                    ? _buildListItem(context, snapshot.data.documents[index])
-                    : null,
+                itemBuilder: (context, index) =>
+                    _buildListItem(context, snapshot.data.documents[index]),
                 itemCount: snapshot.data.documents.length,
               );
             }
