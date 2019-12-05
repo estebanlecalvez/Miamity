@@ -41,7 +41,6 @@ class _MessagePageState extends State<MessagesPage> {
       currentUser = user;
       usersToShow = usersChattedWith;
     });
-    logger.i("userChattedWith : " + usersChattedWith.toString());
     this.setState(() {
       isCharging = false;
     });
@@ -51,12 +50,7 @@ class _MessagePageState extends State<MessagesPage> {
     bool showThisUser = false;
     String lastMessage = "";
     for (var userToShow in usersToShow) {
-      logger.i("userToShow Id : " +
-          userToShow["userId"].toString() +
-          "actual user id : " +
-          document.documentID.toString());
       if (userToShow["userId"].toString() == document.documentID.toString()) {
-        logger.i("true");
         lastMessage = userToShow["lastMessage"];
         showThisUser = true;
       }
