@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Miamity',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: colorCustom, fontFamily: 'Raleway'),
       home: RootPage(auth: new Auth()),
     );

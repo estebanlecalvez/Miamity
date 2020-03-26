@@ -38,6 +38,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
   @override
   initState() {
     isUserCharged();
+    print(widget.document["description"]);
     super.initState();
   }
 
@@ -215,14 +216,15 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                       child: new Center(
                         child: RaisedButton(
                           padding: EdgeInsets.all(10),
-                          color: Colors.orange,
+                          color: Colors.orange[700],
                           child: Row(
                             children: <Widget>[
-                              Icon(Icons.message),
+                              Icon(Icons.message, color: Colors.white),
                               Text(
                                 'Contacter',
                                 textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
                               ),
                             ],
                           ),
@@ -301,11 +303,13 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
           ),
           //Distance, Parts, Prix
           Container(
+            height: 10,
+            color: Colors.grey[100],
+          ),
+          Container(
             color: Colors.grey[100],
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Flexible(
                   child: Container(
@@ -414,24 +418,32 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
               ],
             ),
           ),
-          //Description
           Container(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Flexible(
-                  child: Text(
-                    widget.document['description'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontFamily: 'Raleway'),
+            height: 10,
+            color: Colors.grey[100],
+          ),
+          //Description
+          widget.document["description"] != null &&
+                  widget.document["description"] != " " &&
+                  widget.document["description"] != ""
+              ? Container(
+                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Flexible(
+                        child: Text(
+                          widget.document['description'],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontFamily: 'Raleway'),
+                        ),
+                      )
+                    ],
                   ),
                 )
-              ],
-            ),
-          ),
+              : Container(height: 10),
           //Switch Allergènes, info cuisto, Avis
           Container(
             padding: EdgeInsets.only(bottom: 10),
@@ -451,7 +463,11 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                       Flexible(
                         fit: FlexFit.loose,
                         child: FlatButton(
-                          child: Text('Allergènes'),
+                          child: Text('Allergènes',
+                              style: TextStyle(
+                                  color: _activeAllergens
+                                      ? Colors.white
+                                      : Colors.black)),
                           color: _activeAllergens
                               ? Colors.orange[700]
                               : Colors.grey[100],
@@ -471,7 +487,11 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                           Flexible(
                             fit: FlexFit.loose,
                             child: FlatButton(
-                              child: Text('Info cuisto'),
+                              child: Text('Info cuisto',
+                                  style: TextStyle(
+                                      color: _activeInfo
+                                          ? Colors.white
+                                          : Colors.black)),
                               color: _activeInfo
                                   ? Colors.orange[700]
                                   : Colors.grey[100],
@@ -490,7 +510,11 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                       Flexible(
                         fit: FlexFit.loose,
                         child: FlatButton(
-                          child: Text('Avis'),
+                          child: Text('Avis',
+                              style: TextStyle(
+                                  color: _activeOpinion
+                                      ? Colors.white
+                                      : Colors.black)),
                           color: _activeOpinion
                               ? Colors.orange[700]
                               : Colors.grey[100],
@@ -515,11 +539,12 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
       bottomNavigationBar: Container(
         height: 60,
         child: RaisedButton(
-          color: Colors.orange,
+          color: Colors.orange[700],
           child: Text(
             'Commander',
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            style: TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white),
           ),
           onPressed: () {},
         ),
