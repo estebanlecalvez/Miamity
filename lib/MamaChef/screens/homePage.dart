@@ -46,89 +46,87 @@ class HomeScreenState extends State<HomeScreen> {
                 child: Icon(Icons.info_outline, color: Colors.white),
               ),
             ),
-            ListView(
+            Column(
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                    ),
-                    GestureDetector(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: FadeInImage.memoryNetwork(
-                          height: 200,
-                          width: 200,
-                          placeholder: kTransparentImage,
-                          fadeInDuration: const Duration(seconds: 1),
-                          fit: BoxFit.cover,
-                          image:
-                              "https://journalmetro.com/wp-content/uploads/2014/05/carriecc80res_chef-cuisinier_c100.jpg?w=860",
-                        ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: FadeInImage.memoryNetwork(
+                        height: 200,
+                        width: 200,
+                        placeholder: kTransparentImage,
+                        fadeInDuration: const Duration(seconds: 1),
+                        fit: BoxFit.cover,
+                        image:
+                            "https://journalmetro.com/wp-content/uploads/2014/05/carriecc80res_chef-cuisinier_c100.jpg?w=860",
                       ),
-                      onTap: () async {
-                        widget.auth.changePage(
-                            context,
-                            AddPlate(
-                                auth: widget.auth,
-                                onSignedOut: widget.onSignedOut));
-                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                    ),
-                    MiamityButtonWithIcon(
-                        title: _isTraducted
-                            ? "JE VEUX CUISINER"
-                            : "JE VEUX MIAMINER",
-                        icon: Icons.cake,
-                        onPressed: () async {
-                          widget.auth.changePage(
-                              context,
-                              AddPlate(
-                                  auth: widget.auth,
-                                  onSignedOut: widget.onSignedOut));
-                        }),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                    ),
-                    GestureDetector(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: FadeInImage.memoryNetwork(
-                          height: 200,
-                          width: 200,
-                          placeholder: kTransparentImage,
-                          fadeInDuration: const Duration(seconds: 1),
-                          fit: BoxFit.cover,
-                          image:
-                              "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
-                        ),
+                    onTap: () async {
+                      widget.auth.changePage(
+                          context,
+                          AddPlate(
+                              auth: widget.auth,
+                              onSignedOut: widget.onSignedOut));
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                MiamityButtonWithIcon(
+                    title:
+                        _isTraducted ? "JE VEUX CUISINER" : "JE VEUX MIAMINER",
+                    icon: Icons.cake,
+                    onPressed: () async {
+                      widget.auth.changePage(
+                          context,
+                          AddPlate(
+                              auth: widget.auth,
+                              onSignedOut: widget.onSignedOut));
+                    }),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: FadeInImage.memoryNetwork(
+                        height: 200,
+                        width: 200,
+                        placeholder: kTransparentImage,
+                        fadeInDuration: const Duration(seconds: 1),
+                        fit: BoxFit.cover,
+                        image:
+                            "https://p8.storage.canalblog.com/88/72/717345/113739915.jpg",
                       ),
-                      onTap: () async {
-                        widget.auth.changePage(
-                            context,
-                            DishesListPage(
-                                auth: widget.auth,
-                                onSignedOut: widget.onSignedOut));
-                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                    ),
-                    MiamityButtonWithIcon(
-                        title:
-                            _isTraducted ? "JE VEUX MANGER" : "JE VEUX MIAMER",
-                        icon: Icons.restaurant_menu,
-                        onPressed: () {
-                          widget.auth.changePage(
-                              context,
-                              DishesListPage(
-                                  auth: widget.auth,
-                                  onSignedOut: widget.onSignedOut));
-                        }),
-                  ],
-                )
+                    onTap: () async {
+                      widget.auth.changePage(
+                          context,
+                          DishesListPage(
+                              auth: widget.auth,
+                              onSignedOut: widget.onSignedOut));
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                MiamityButtonWithIcon(
+                    title: _isTraducted ? "JE VEUX MANGER" : "JE VEUX MIAMER",
+                    icon: Icons.restaurant_menu,
+                    onPressed: () {
+                      widget.auth.changePage(
+                          context,
+                          DishesListPage(
+                              auth: widget.auth,
+                              onSignedOut: widget.onSignedOut));
+                    }),
               ],
             ),
           ],

@@ -7,16 +7,16 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   Map<int, Color> color = {
-    50: Color.fromRGBO(136, 14, 79, .1),
-    100: Color.fromRGBO(136, 14, 79, .2),
-    200: Color.fromRGBO(136, 14, 79, .3),
-    300: Color.fromRGBO(136, 14, 79, .4),
-    400: Color.fromRGBO(136, 14, 79, .5),
-    500: Color.fromRGBO(136, 14, 79, .6),
-    600: Color.fromRGBO(136, 14, 79, .7),
-    700: Color.fromRGBO(136, 14, 79, .8),
-    800: Color.fromRGBO(136, 14, 79, .9),
-    900: Color.fromRGBO(136, 14, 79, 1),
+    50: Colors.orange[50],
+    100: Colors.orange[100],
+    200: Colors.orange[200],
+    300: Colors.orange[300],
+    400: Colors.orange[400],
+    500: Colors.orange[500],
+    600: Colors.orange[600],
+    700: Colors.orange[700],
+    800: Colors.orange[800],
+    900: Colors.orange[900],
   };
 
   @override
