@@ -28,26 +28,26 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
           child: Center(
-        child: ListView(
+        child: Stack(
           children: <Widget>[
-            Stack(
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isTraducted = !_isTraducted;
+                });
+              },
+              child: Container(
+                height: 42,
+                width: 42,
+                decoration: BoxDecoration(
+                    color: Colors.orange[700],
+                    borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(10))),
+                child: Icon(Icons.info_outline, color: Colors.white),
+              ),
+            ),
+            ListView(
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isTraducted = !_isTraducted;
-                    });
-                  },
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Colors.orange[700],
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(10))),
-                    child: Icon(Icons.info_outline, color: Colors.white),
-                  ),
-                ),
                 Column(
                   children: <Widget>[
                     Padding(
@@ -128,9 +128,9 @@ class HomeScreenState extends State<HomeScreen> {
                                   onSignedOut: widget.onSignedOut));
                         }),
                   ],
-                ),
+                )
               ],
-            )
+            ),
           ],
         ),
       )),
