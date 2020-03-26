@@ -78,12 +78,17 @@ class _MessagePageState extends State<MessagesPage> {
                     Column(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.only(right: 30.0),
-                          child: CircleAvatar(
-                              radius: 30,
-                              backgroundImage:
-                                  NetworkImage(document["profile_picture"])),
-                        ),
+                            padding: EdgeInsets.only(right: 30.0),
+                            child: document["profile_picture"] != null &&
+                                    document["profile_picture"] != ""
+                                ? CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: NetworkImage(
+                                        document["profile_picture"]))
+                                : CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        AssetImage("images/no_avatar.jpg"))),
                       ],
                     ),
                     Column(

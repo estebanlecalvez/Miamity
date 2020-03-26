@@ -252,12 +252,7 @@ class ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                             errorWidget: (context, url, error) => Material(
-                              child: Image.asset(
-                                'images/img_not_available.jpeg',
-                                width: 200.0,
-                                height: 200.0,
-                                fit: BoxFit.cover,
-                              ),
+                              child: Icon(Icons.error),
                               borderRadius: BorderRadius.all(
                                 Radius.circular(8.0),
                               ),
@@ -308,6 +303,13 @@ class ChatScreenState extends State<ChatScreen> {
                             height: 35.0,
                             padding: EdgeInsets.all(10.0),
                           ),
+                          errorWidget: (context, url, error) => Material(
+                            child: Icon(Icons.error),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8.0),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                          ),
                           imageUrl: peerAvatar,
                           width: 35.0,
                           height: 35.0,
@@ -354,12 +356,7 @@ class ChatScreenState extends State<ChatScreen> {
                                   ),
                                   errorWidget: (context, url, error) =>
                                       Material(
-                                    child: Image.asset(
-                                      'images/img_not_available.jpeg',
-                                      width: 200.0,
-                                      height: 200.0,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: Icon(Icons.error),
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
