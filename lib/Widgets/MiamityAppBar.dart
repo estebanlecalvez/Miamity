@@ -24,6 +24,12 @@ class MiamityAppBarState extends State<MiamityAppBar> {
         child: Text("A propos"),
         applicationName: "Miamity",
         applicationVersion: "beta_0.0.5",
+        aboutBoxChildren: <Widget>[
+          Text("Miamer: Manger"),
+          Text("Miaminer: Cuisiner"),
+          Text("Miameur: Celui qui mange"),
+          Text("Miamchef: Celui qui cuisine")
+        ],
         applicationIcon: Icon(Icons.restaurant),
         icon: Icon(Icons.info));
 
