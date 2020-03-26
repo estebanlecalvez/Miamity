@@ -103,6 +103,7 @@ flutter:
    - images/logo_with_text.jpg
    - images/logo_without_text.png
    - images/logo_without_text_app_icon.jpg
+   - images/bank_card.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
