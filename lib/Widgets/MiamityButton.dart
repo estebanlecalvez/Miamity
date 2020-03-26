@@ -23,9 +23,7 @@ class MiamityButton extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text(title ?? "",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
+                  Text(title ?? "", style: TextStyle(fontSize: 16)),
                 ],
               )
             ],

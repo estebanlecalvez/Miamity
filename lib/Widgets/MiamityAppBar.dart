@@ -33,6 +33,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
         title: Text(s),
         onTap: () {
           setState(() {
+            Navigator.of(context, rootNavigator: true).pop('drawer');
             widget.auth.changePage(context, route);
           });
         },

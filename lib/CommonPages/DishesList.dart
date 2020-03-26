@@ -149,7 +149,7 @@ class DishesListState extends State<DishesListPage> {
           FlatButton(
               child: Icon(
                 Icons.filter_list,
-                color: Colors.black,
+                color: Colors.white,
               ),
               onPressed: () async {
                 _filterResults(context);
