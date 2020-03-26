@@ -73,7 +73,7 @@ class MiamityAppBarState extends State<MiamityAppBar> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image(
-                    image: new AssetImage('images/logo_without_text.jpg'),
+                    image: new AssetImage('images/logo_without_text.png'),
                     fit: BoxFit.fitWidth),
               ))),
       getNavItem(

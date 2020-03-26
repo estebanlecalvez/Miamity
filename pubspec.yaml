@@ -55,7 +55,7 @@ dev_dependencies:
 
 
 flutter_icons:
-  image_path: "logo_without_text.jpg"
+  image_path: "logo_without_text_app_icon.jpg"
   android: true
 
 # For information on the generic Dart part of this file, see the
@@ -100,7 +100,8 @@ flutter:
    - images/MiamityLogo.png
    - images/no_avatar.jpg
    - images/logo_with_text.jpg
-   - images/logo_without_text.jpg
+   - images/logo_without_text.png
+   - images/logo_without_text_app_icon.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

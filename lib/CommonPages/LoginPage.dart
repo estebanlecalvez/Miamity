@@ -81,69 +81,68 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[
               Opacity(
                 opacity: _isLoading ? 0.7 : 1,
-                child: ListView(
-                  children: <Widget>[
-                    FormBuilder(
-                        autovalidate: true,
-                        initialValue: {'email': null, 'password': null},
-                        key: formKey,
-                        child: Column(
-                          children: <Widget>[
-                            PageTitle(title: "Se connecter"),
-                            new MiamityFormBuilderTextField(
-                              controller: _emailController,
-                              icon: Icons.email,
-                              label: "Email",
-                              keyboardType: TextInputType.emailAddress,
-                              attribute: "email",
-                              validators: [
-                                FormBuilderValidators.required(
-                                    errorText: 'Veuillez entrer un email.'),
-                                FormBuilderValidators.max(300),
-                                FormBuilderValidators.email(),
-                              ],
-                            ),
-                            new MiamityFormBuilderTextField(
-                              controller: _passwordController,
-                              label: "Mot de passe",
-                              attribute: "password",
-                              icon: Icons.lock,
-                              validators: [
-                                FormBuilderValidators.required(
-                                    errorText:
-                                        "Veuillez entrer votre mot de passe.")
-                              ],
-                              isObscureText: true,
-                            ),
-                            _smthngIsWrong
-                                ? Text(_errorMessage,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0))
-                                : Text(""),
-                            FlatButton(
-                              child: Text("Vous n'avez pas de compte?",
-                                  style: TextStyle(color: Colors.blue)),
-                              onPressed: () {
-                                setState(() {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RegisterPage(auth: widget.auth)));
-                                });
-                              },
-                            ),
-                            new MiamityButton(
-                                title: "SE CONNECTER",
-                                onPressed: () {
-                                  validateAndSubmit();
-                                }),
+                child: FormBuilder(
+                    autovalidate: true,
+                    initialValue: {'email': null, 'password': null},
+                    key: formKey,
+                    child: Column(
+                      children: <Widget>[
+                        Spacer(),
+                        PageTitle(title: "Se connecter"),
+                        new MiamityFormBuilderTextField(
+                          controller: _emailController,
+                          icon: Icons.email,
+                          label: "Email",
+                          keyboardType: TextInputType.emailAddress,
+                          attribute: "email",
+                          validators: [
+                            FormBuilderValidators.required(
+                                errorText: 'Veuillez entrer un email.'),
+                            FormBuilderValidators.max(300),
+                            FormBuilderValidators.email(),
                           ],
-                        )),
-                  ],
-                ),
+                        ),
+                        new MiamityFormBuilderTextField(
+                          controller: _passwordController,
+                          label: "Mot de passe",
+                          attribute: "password",
+                          icon: Icons.lock,
+                          validators: [
+                            FormBuilderValidators.required(
+                                errorText:
+                                    "Veuillez entrer votre mot de passe.")
+                          ],
+                          isObscureText: true,
+                        ),
+                        Spacer(),
+                        _smthngIsWrong
+                            ? Text(_errorMessage,
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0))
+                            : Text(""),
+                        Spacer(),
+                        FlatButton(
+                          child: Text("Vous n'avez pas de compte?",
+                              style: TextStyle(color: Colors.blue)),
+                          onPressed: () {
+                            setState(() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RegisterPage(auth: widget.auth)));
+                            });
+                          },
+                        ),
+                        new MiamityButton(
+                            title: "SE CONNECTER",
+                            onPressed: () {
+                              validateAndSubmit();
+                            }),
+                      ],
+                    )),
               ),
               Opacity(
                 opacity: _isLoading ? 1.0 : 0,
