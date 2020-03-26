@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:miamitymds/CommonPages/ChatPage.dart';
+import 'package:miamitymds/Miameur/command_part_one.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/auth.dart';
 
@@ -546,11 +547,20 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
             style: TextStyle(
                 fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white),
           ),
-          onPressed: () {},
+          onPressed: () {
+            widget.auth.changePage(
+                context,
+                CommandPartOne(
+                    auth: widget.auth,
+                    onSignedOut: widget.onSignedOut,
+                    dish: widget.document));
+          },
         ),
       ),
-      endDrawer:
-          MiamityAppBar(auth: widget.auth, onSignedOut: widget.onSignedOut),
+      endDrawer: MiamityAppBar(
+        auth: widget.auth,
+        onSignedOut: widget.onSignedOut,
+      ),
     );
   }
 }
