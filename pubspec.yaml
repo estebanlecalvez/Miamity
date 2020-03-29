@@ -17,7 +17,7 @@ environment:
   sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
-  cloud_firestore: 0.13.4+2
+  cloud_firestore:
   math_expressions: 2.0.0
   transparent_image:
   permission_handler:
@@ -32,7 +32,6 @@ dependencies:
   firebase_auth:
   dbcrypt:
   image_cropper:
-  camera:  
   path:
   path_provider: ^1.3.0
   dash_chat:

@@ -9,17 +9,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:miamitymds/CommonPages/TakePhotoPage.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
-import 'package:camera/camera.dart';
-import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityDoubleButton.dart';
 import 'package:miamitymds/Widgets/MiamityFormBuilderTextField.dart';
-import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityMultiSelect.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRangeDate.dart';
-import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/Widgets/PreviewDishCard.dart';
 import 'package:miamitymds/auth.dart';
@@ -69,12 +64,9 @@ class _AddPlateState extends State<AddPlate> {
   String userId;
   String message;
   bool isSuccess;
-  File sampleImage;
   String imageURL;
   bool waitingForUploadImage;
   bool _isLoading = false;
-  List<CameraDescription> cameras;
-  CameraDescription firstCamera;
   bool isAnImage = false;
   String dropdownValue = "One";
   List<String> typeList = [
@@ -141,6 +133,7 @@ class _AddPlateState extends State<AddPlate> {
   String name;
   String price;
   String part;
+  File _image;
   var formField;
   Dish dish;
 
@@ -152,11 +145,8 @@ class _AddPlateState extends State<AddPlate> {
     message = "";
     _isLoading = false;
     isSuccess = true;
-    if (widget.image != null && sampleImage == null) {
+    if (_image != null) {
       isAnImage = true;
-      setState(() {
-        sampleImage = widget.image;
-      });
     }
     widget.auth.currentUser().then((currentUserId) {
       print("Current user id from AddPlatPage $currentUserId");
@@ -171,7 +161,7 @@ class _AddPlateState extends State<AddPlate> {
   }
 
   uploadImage() async {
-    if (sampleImage == null) {
+    if (_image == null) {
       imageURL =
           "https://cdn.samsung.com/etc/designs/smg/global/imgs/support/cont/NO_IMG_600x600.png";
       return;
@@ -182,7 +172,7 @@ class _AddPlateState extends State<AddPlate> {
       final StorageReference firebaseStorageRef = FirebaseStorage.instance
           .ref()
           .child(Random().nextInt(10000000).toString() + ".jpg");
-      final StorageUploadTask task = firebaseStorageRef.putFile(sampleImage);
+      final StorageUploadTask task = firebaseStorageRef.putFile(_image);
       final StorageTaskSnapshot taskSnapshot = (await task.onComplete);
       imageURL = await taskSnapshot.ref.getDownloadURL();
       setState(() {
@@ -208,30 +198,12 @@ class _AddPlateState extends State<AddPlate> {
     }
   }
 
-  Future getImage() async {
-    _openFileExplorer();
-    var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(tempImage.path);
-    if (tempImage != null) {
-      File croppedFile = await ImageCropper.cropImage(
-        sourcePath: tempImage.path,
-        ratioX: 1.3,
-        ratioY: 1.0,
-        maxWidth: 400,
-        maxHeight: 400,
-      );
-      setState(() {
-        sampleImage = croppedFile;
-      });
-    }
-  }
-
   _submit() async {
     setState(() {
       _isLoading = true;
     });
     if (formKey.currentState.saveAndValidate()) {
-      if (sampleImage != null) {
+      if (_image != null) {
         await uploadImage();
       }
       formField = formKey.currentState.value;
@@ -469,26 +441,18 @@ class _AddPlateState extends State<AddPlate> {
                           btnColor1: Colors.blue,
                           title1: "JE CHOISIS UNE PHOTO",
                           onPressed1: () async {
-                            getImage();
+                            _selectImageFrom(isCamera: false);
                           },
                           title2: "JE PREND UNE PHOTO",
                           onPressed2: () {
-                            formKey.currentState.save();
-                            formKey.currentState.saveAndValidate();
-                            widget.auth.changePage(
-                                context,
-                                TakeAPhotoPage(
-                                  currentForm: formKey.currentState,
-                                  auth: widget.auth,
-                                  onSignedOut: widget.onSignedOut,
-                                ));
+                            _selectImageFrom(isCamera: true);
                           },
                         )
                       ],
                     )),
                     Center(
                         child: PreviewDishCard(
-                            image: sampleImage,
+                            image: _image,
                             name: name,
                             nombrePart: part,
                             price: price)),
@@ -543,5 +507,21 @@ class _AddPlateState extends State<AddPlate> {
         onSignedOut: widget.onSignedOut,
       ),
     );
+  }
+
+  Future _selectImageFrom({bool isCamera}) async {
+    var image = await ImagePicker.pickImage(
+        source: isCamera ? ImageSource.camera : ImageSource.gallery);
+
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: image.path,
+      ratioX: 1.3,
+      ratioY: 1.0,
+      maxWidth: 400,
+      maxHeight: 400,
+    );
+    setState(() {
+      _image = croppedImage;
+    });
   }
 }
