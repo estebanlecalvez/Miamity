@@ -13,7 +13,7 @@
 
         <!-- Google maps integration -->
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg"/>  
+            android:value="AIzaSyCw8uPn9J95k31zGuZFukWmJPYOx1q-1Sw"/>  
         <!-- Cropper d'image -->      
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

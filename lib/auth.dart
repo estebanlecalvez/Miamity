@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -10,6 +11,7 @@ abstract class BaseAuth {
   Future<String> signInWithEmailAndPassword(String email, String password);
   Future<String> createUserWithEmailAndPassword(String email, String password);
   Future<String> currentUser();
+  Future<DocumentSnapshot> getCurrentUser();
   Future<void> signOut();
   Future<bool> isAUserConnected();
   void changePage(BuildContext context, Widget route);
@@ -64,5 +66,9 @@ class Auth implements BaseAuth {
     } else {
       return null;
     }
+  }
+
+  Future<DocumentSnapshot> getCurrentUser()async {
+
   }
 }

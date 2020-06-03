@@ -28,24 +28,7 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
           child: Center(
-        child: Stack(
-          children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isTraducted = !_isTraducted;
-                });
-              },
-              child: Container(
-                height: 42,
-                width: 42,
-                decoration: BoxDecoration(
-                    color: Colors.orange[700],
-                    borderRadius:
-                        BorderRadius.only(bottomRight: Radius.circular(10))),
-                child: Icon(Icons.language, color: Colors.white),
-              ),
-            ),
+        child: 
             Column(
               children: <Widget>[
                 Spacer(),
@@ -73,7 +56,7 @@ class HomeScreenState extends State<HomeScreen> {
                 Spacer(),
                 MiamityButtonWithIcon(
                     title:
-                        _isTraducted ? "JE VEUX CUISINER" : "JE VEUX MIAMINER",
+                       "JE VEUX CUISINER" ,
                     icon: Icons.cake,
                     onPressed: () async {
                       widget.auth.changePage(
@@ -106,7 +89,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 Spacer(),
                 MiamityButtonWithIcon(
-                    title: _isTraducted ? "JE VEUX MANGER" : "JE VEUX MIAMER",
+                  title:"JE VEUX MANGER",
                     icon: Icons.restaurant_menu,
                     onPressed: () {
                       widget.auth.changePage(
@@ -117,8 +100,7 @@ class HomeScreenState extends State<HomeScreen> {
                     }),
               ],
             ),
-          ],
-        ),
+         
       )),
       // Set the nav drawer
       endDrawer:

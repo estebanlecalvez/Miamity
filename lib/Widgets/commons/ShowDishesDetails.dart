@@ -4,6 +4,8 @@ import 'package:miamitymds/CommonPages/ChatPage.dart';
 import 'package:miamitymds/Miameur/command_part_one.dart';
 import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/auth.dart';
+import 'dart:math';
+
 
 class ShowDishesDetailsPage extends StatefulWidget {
   ShowDishesDetailsPage(
@@ -84,7 +86,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
       List<Widget> allergens = [];
       allergens.add(new Flexible(
           child: new Text(
-        'Has autem provincias, quas Orontes ambiens amnis imosque pedes Cassii montis illius celsi praetermeans funditur in Parthenium mare, Gnaeus Pompeius superato Tigrane regnis Armeniorum abstractas dicioni Romanae coniunxit.',
+        "L'utilisateur n'a pas renseigné d'allergènes. Vous pouvez le contacter pour de plus amples d'informations.",
         textAlign: TextAlign.center,
       )));
       return new Row(
@@ -99,7 +101,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
       List<Widget> info = [];
       info.add(new Flexible(
           child: new Text(
-        'On l\'a fait poto',
+        "L'utilisateur n'a pas renseigné d'informations.",
         textAlign: TextAlign.center,
       )));
       return new Row(
@@ -135,21 +137,37 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     for (var i = 0; i < document.length; i++) {
       opinions.add(
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              child: Text(
+            Row(children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal:12),),
+              Container(
+                width:MediaQuery.of(context).size.width * 0.3 ,
+                child: Text(
                 document[i]['username'],
-                textAlign: TextAlign.center,
-              ),
-            )
+              ),),
+             
+              Padding(padding: EdgeInsets.symmetric(horizontal:12),),
+              generateRandomStars(),
+            ],)
+           
           ],
         ),
       );
     }
     return opinions;
+  }
+
+  int randomStars(){
+     var rng = new Random();
+     return rng.nextInt(5);
+  }
+
+  Widget generateRandomStars(){
+    List<Widget> stars =[];
+    for (var i =0; i< randomStars()+1;i++) {
+      stars.add(Icon(Icons.star,color: Colors.orange[700],));
+    } 
+    return Row(children: stars);
   }
 
   @override
@@ -197,6 +215,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                   children: <Widget>[
                     Icon(
                       Icons.person,
+                      color: Colors.grey[500],
                       size: 30,
                     ),
                     StreamBuilder(
@@ -258,25 +277,26 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                   Icon(
                     Icons.star,
                     size: 30,
-                    color: Colors.yellow,
+                    color: Colors.orange[700],
                   ),
                   Icon(
                     Icons.star,
                     size: 30,
-                    color: Colors.yellow,
+                    color: Colors.orange[700],
                   ),
                   Icon(
                     Icons.star,
                     size: 30,
-                    color: Colors.yellow,
+                    color: Colors.orange[700],
                   ),
                   Icon(
                     Icons.star,
                     size: 30,
-                    color: Colors.yellow,
+                    color: Colors.orange[700],
                   ),
                   Icon(
                     Icons.star,
+                    color:Colors.grey[500],
                     size: 30,
                   ),
                 ],

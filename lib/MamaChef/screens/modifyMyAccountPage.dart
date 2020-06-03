@@ -8,8 +8,6 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:miamitymds/MamaChef/screens/myAccountPage.dart';
-import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
@@ -95,23 +93,20 @@ class _ModifyMyAccountPageState extends State<ModifyMyAccountPage> {
     }
   }
 
-  void _openFileExplorer() async {
+   void _openFileExplorer() async {
     ///Check si les permissions ont été données. Sinon les demande.
-    PermissionStatus permissionCamera =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    PermissionStatus permissionPhoto =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
-    if (permissionCamera.value.toString() ==
-            PermissionStatus.granted.toString() &&
-        permissionPhoto.value.toString() ==
-            PermissionStatus.granted.toString()) {
+    var permissionCamera =await Permission.camera.request().isGranted;
+    var permissionPhoto =await Permission.photos.request().isGranted;
+    if (permissionCamera && permissionPhoto) {
       print("permission already granted");
     } else {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.camera, PermissionGroup.photos]);
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.camera,
+        Permission.photos,
+      ].request();
+     print(statuses[Permission.location]);
     }
   }
-
   uploadImage() async {
     if (sampleImage == null) {
       imageURL =

@@ -23,10 +23,9 @@ class _UserListState extends State<UserList> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return new GestureDetector(
         onTap: () {
-          Navigator.push(
+          widget.auth.changePage(
               context,
-              NoPageTransition(
-                  builder: (context) => ShowUserPage(document: document)));
+              ShowUserPage(document: document));
         },
         child: new Card(
             child: Container(

@@ -183,18 +183,16 @@ class _AddPlateState extends State<AddPlate> {
 
   void _openFileExplorer() async {
     ///Check si les permissions ont été données. Sinon les demande.
-    PermissionStatus permissionCamera =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    PermissionStatus permissionPhoto =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
-    if (permissionCamera.value.toString() ==
-            PermissionStatus.granted.toString() &&
-        permissionPhoto.value.toString() ==
-            PermissionStatus.granted.toString()) {
+    var permissionCamera =await Permission.camera.request().isGranted;
+    var permissionPhoto =await Permission.photos.request().isGranted;
+    if (permissionCamera && permissionPhoto) {
       print("permission already granted");
     } else {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.camera, PermissionGroup.photos]);
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.camera,
+        Permission.photos,
+      ].request();
+     print(statuses[Permission.location]);
     }
   }
 
@@ -353,14 +351,14 @@ class _AddPlateState extends State<AddPlate> {
                             ),
                             Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 6.0),
-                                child: FormBuilderStepper(
+                                child: FormBuilderTouchSpin(
                                   initialValue: 1,
                                   step: 1,
                                   attribute: 'nbParts',
                                   decoration: InputDecoration(
                                     alignLabelWithHint: true,
                                     labelText: 'Nombres de parts',
-                                    contentPadding: EdgeInsets.all(15),
+                                    contentPadding: EdgeInsets.all(6),
                                     prefixIcon: Icon(Icons.pie_chart),
                                     border: new OutlineInputBorder(
                                         borderSide: new BorderSide(),
@@ -371,6 +369,7 @@ class _AddPlateState extends State<AddPlate> {
                                     FormBuilderValidators.required(),
                                   ],
                                 )),
+                                Padding(padding: EdgeInsets.symmetric(vertical:4),),
                             MiamityFormBuilderTextField(
                               attribute: 'price',
                               label: 'Prix par part',
@@ -515,8 +514,8 @@ class _AddPlateState extends State<AddPlate> {
 
     File croppedImage = await ImageCropper.cropImage(
       sourcePath: image.path,
-      ratioX: 1.3,
-      ratioY: 1.0,
+      aspectRatio:CropAspectRatio(ratioX: 1.3, ratioY: 1.0),
+
       maxWidth: 400,
       maxHeight: 400,
     );

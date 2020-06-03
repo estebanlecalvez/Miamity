@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         var form = formKey.currentState.value;
         var formValues = form.values.toList();
         await widget.auth
-            .signInWithEmailAndPassword(formValues[0], formValues[1]);
+            .signInWithEmailAndPassword(formValues[0], _password);
         String userId = await widget.auth.currentUser();
         if (userId != null) {
           print("Signed in as user with id $userId");
@@ -74,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return new Scaffold(
       body: new PageView(
         children: <Widget>[
@@ -102,19 +103,17 @@ class _LoginPageState extends State<LoginPage> {
                             FormBuilderValidators.email(),
                           ],
                         ),
-                        new MiamityFormBuilderTextField(
-                          controller: _passwordController,
-                          label: "Mot de passe",
-                          attribute: "password",
+                        MiamityTextFormField(
                           icon: Icons.lock,
-                          validators: [
-                            FormBuilderValidators.required(
-                                errorText:
-                                    "Veuillez entrer votre mot de passe.")
-                          ],
+                          label: 'Password*',
+                          keyboardType: TextInputType.visiblePassword,
                           isObscureText: true,
-                        ),
-                        Spacer(),
+                          onChanged: (value) => _password = value,
+                          validator: (String value) => value.isEmpty
+                              ? 'Vous devez entrer un mot de passe.'
+                              : null,
+                          onSaved: (value) => _password = value),
+                        // Spacer(),
                         _smthngIsWrong
                             ? Text(_errorMessage,
                                 style: TextStyle(

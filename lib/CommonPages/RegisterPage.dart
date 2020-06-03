@@ -6,11 +6,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:miamitymds/CommonPages/LoginPage.dart';
 import 'package:miamitymds/Widgets/MiamityAllergenicInfo.dart';
 import 'package:miamitymds/Widgets/MiamityButton.dart';
+import 'package:miamitymds/Widgets/MiamityMultiSelect.dart';
 import 'package:miamitymds/Widgets/MiamityProgressIndicator.dart';
 import 'package:miamitymds/Widgets/MiamityRedButton.dart';
 import 'package:miamitymds/Widgets/MiamityGreenButton.dart';
@@ -24,8 +27,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:miamitymds/Widgets/MiamityTextField.dart';
 import 'package:image_picker/image_picker.dart';
 
-const kGoogleApiKey = "AIzaSyDGduKhs9Z1sqpz0i6GBGEr3O8XBzqKxFg";
+const kGoogleApiKey = "AIzaSyCw8uPn9J95k31zGuZFukWmJPYOx1q-1Sw";
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
+final kInitialPosition = LatLng(-33.8567844, 151.213108);
 
 final StorageReference storageReference = FirebaseStorage().ref();
 
@@ -40,6 +44,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  
   String _userFirstname;
   String _userLastname;
   String _userEmail;
@@ -58,6 +63,91 @@ class _RegisterPageState extends State<RegisterPage> {
   String _encryptedPassword;
   bool isAllergic;
   String _allergenic;
+  List<String> centresdinteret = [
+    "Bénévolat",
+    "Footing",
+    "Football",
+    "Basketball",
+    "Musique",
+    "Danse",
+    "Théâtre",
+    "Peinture",
+    "Cuisine",
+    "Poterie",
+    "Sculpture",
+    "Ecriture",
+    "Couture",
+    "Blogging",
+    "Handball",
+    "Vélo",
+    "Marathon",
+    "Netflix",
+    "Youtube",
+    "Facebook",
+    "Instagram",
+    "Twitter",
+    "TikTok",
+    "Manger",
+    "Courir",
+    "Sport",
+    "Jeux vidéos",
+    "Séries",
+    "Boxe",
+    "Musculation",
+    "Industrie",
+    "Médecine",
+    "Nouvelles technologies",
+    "Mode",
+    "Dessin",
+    "Golf",
+    "Patinage",
+    "Evenementiel",
+    "Voyages",
+    "Tennis",
+    "Yoga",
+    "Méditation",
+    "Bowling",
+    "Escape game",
+    "Transports en commun",
+    "Apéro",
+    "Produits région",
+    "Hygiène de vie",
+    "Abduction",
+    "Monde du digital",
+    "Pompier",
+    "Société",
+    "Littérature",
+    "Histoire",
+    "Géographie",
+    "Biologie",
+    "Piano",
+    "Shopping",
+    "DIY",
+    "Travaux manuels",
+    "Opéra",
+    "Bricolage",
+    "Décoration",
+    "Variété",
+    "Logistique",
+    "Entrepreunariat",
+    "Sports nautiques",
+    "Animé",
+    "Automobile",
+    "Religion",
+    "Relationnel",
+    "Découvrir les autres",
+    "Partage",
+    "Passion",
+    "Psychologie",
+    "Pâtisserie",
+    "Végétarisme",
+    "Eco-responsabilité",
+    "Marche",
+    "Activités en plein air",
+    "Aviation",
+  ];
+  List<String> selectedCentresDinteret=null;
+  PickResult selectedPlace;
 
   @override
   initState() {
@@ -77,8 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
     File croppedFile = await ImageCropper.cropImage(
       sourcePath: tempImage.path,
-      ratioX: 1.0,
-      ratioY: 1.0,
+      aspectRatio:CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
       maxWidth: 400,
       maxHeight: 400,
     );
@@ -94,6 +183,53 @@ class _RegisterPageState extends State<RegisterPage> {
           //Here we will build the content of the dialog
           return AlertDialog();
         });
+  }
+
+  _showCentreDinteretDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return AlertDialog(
+            title: Text("Centre d'intérêts"),
+            content: Container(
+              width: double.maxFinite,
+              child: ListView(
+                children: <Widget>[
+                  MiamityMultiSelect(
+                    centresdinteret,
+                    onSelectionChanged: (selectedList) {
+                      setState(() {
+                        selectedCentresDinteret = selectedList;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          );
+        });
+  }
+
+  _buildSelectedCentreDinteretList() {
+    List<Widget> choices = List();
+    if (selectedCentresDinteret != null) {
+      selectedCentresDinteret.forEach((item) {
+        choices.add(Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Chip(
+            label: Text(item),
+          ),
+        ));
+      });
+    }
+    return choices;
   }
 
   _showInfoAllergenicDialog() {
@@ -126,18 +262,17 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _openFileExplorer() async {
     ///Check si les permissions ont été données. Sinon les demande.
-    PermissionStatus permissionCamera =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    PermissionStatus permissionPhoto =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.photos);
-    if (permissionCamera.value.toString() ==
-            PermissionStatus.granted.toString() &&
-        permissionPhoto.value.toString() ==
-            PermissionStatus.granted.toString()) {
+    var permissionCamera =await Permission.camera.request().isGranted;
+    var permissionPhoto =await Permission.photos.request().isGranted;
+    if (permissionCamera && permissionPhoto) {
       print("permission already granted");
     } else {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.camera, PermissionGroup.photos]);
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.camera,
+        Permission.photos,
+      ].request();
+     print(statuses[Permission.location]);
+
     }
   }
 
@@ -168,26 +303,6 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {}
   }
 
-  Future<Null> displayPrediction(Prediction p) async {
-    if (p != null) {
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
-
-      // var placeId = p.placeId;
-      double lat = detail.result.geometry.location.lat;
-      double lng = detail.result.geometry.location.lng;
-
-      var address = await Geocoder.local.findAddressesFromQuery(p.description);
-
-      setState(() {
-        this.selectedAddress = address[0].addressLine;
-        this.isAddressSelected = true;
-        this.latitude = lat;
-        this.longitude = lng;
-      });
-    }
-  }
-
   _storeData() async {
     String uid = await widget.auth
         .createUserWithEmailAndPassword(_userEmail, _userPassword);
@@ -205,6 +320,7 @@ class _RegisterPageState extends State<RegisterPage> {
           "address": selectedAddress,
           "latitude": latitude,
           "longitude": longitude,
+          "centres_interet":selectedCentresDinteret,
           "alergenic": _allergenic,
         })
         .then((result) => {
@@ -355,6 +471,18 @@ class _RegisterPageState extends State<RegisterPage> {
                               _userPasswordConfirmation = value,
                           onSaved: (value) =>
                               _userPasswordConfirmation = value),
+                               selectedCentresDinteret == null
+                                ? MiamityTextFormField(
+                                    label: "Centres d'intérets",
+                                    onTap: () => _showCentreDinteretDialog(),
+                                    readOnly: true,
+                                  )
+                                : Text("Centres d'intérets:"),
+                            FlatButton(
+                                onPressed: () => _showCentreDinteretDialog(),
+                                child: Wrap(
+                                  children: _buildSelectedCentreDinteretList(),
+                                )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
@@ -401,9 +529,25 @@ class _RegisterPageState extends State<RegisterPage> {
                               text: selectedAddress,
                               isReadOnly: true,
                               onTapFunction: () async {
-                                Prediction p = await PlacesAutocomplete.show(
-                                    context: context, apiKey: kGoogleApiKey);
-                                displayPrediction(p);
+                               Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlacePicker(
+                                    apiKey: kGoogleApiKey,   // Put YOUR OWN KEY here.
+                                    onPlacePicked: (result) { 
+                                      selectedPlace = result;
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        selectedAddress=selectedPlace.formattedAddress;
+                                        isAddressSelected = true;
+                                        latitude = selectedPlace.geometry.location.lat;
+                                        longitude = selectedPlace.geometry.location.lng;});
+                                    },
+                                    initialPosition:kInitialPosition,
+                                    useCurrentLocation: false,
+                                  ),
+                                ),
+                              );
                               }),
                           MiamityButton(
                               btnColor: Colors.orange[700],
@@ -413,9 +557,27 @@ class _RegisterPageState extends State<RegisterPage> {
                                   selectedAddress = null;
                                   isAddressSelected = false;
                                 });
-                                Prediction p = await PlacesAutocomplete.show(
-                                    context: context, apiKey: kGoogleApiKey);
-                                displayPrediction(p);
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlacePicker(
+                                    apiKey: kGoogleApiKey,   // Put YOUR OWN KEY here.
+                                    onPlacePicked: (result) { 
+                                      selectedPlace = result;
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        selectedAddress= selectedPlace.formattedAddress;
+                                        isAddressSelected = true;
+                                        latitude = selectedPlace.geometry.location.lat;
+                                        longitude = selectedPlace.geometry.location.lng;
+                                        }
+                                        );
+                                    },
+                                    initialPosition:kInitialPosition,
+                                    useCurrentLocation: true,
+                                  ),
+                                ),
+                              );
                               })
                         ],
                       )
@@ -425,9 +587,26 @@ class _RegisterPageState extends State<RegisterPage> {
                         onPressed: () async {
                           // show input autocomplete with selected mode
                           // then get the Prediction selected
-                          Prediction p = await PlacesAutocomplete.show(
-                              context: context, apiKey: kGoogleApiKey);
-                          displayPrediction(p);
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlacePicker(
+                                    apiKey: kGoogleApiKey,   // Put YOUR OWN KEY here.
+                                    onPlacePicked: (result) { 
+                                      selectedPlace = result;
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        selectedAddress=selectedPlace.formattedAddress; 
+                                        isAddressSelected = true;
+                                        latitude = selectedPlace.geometry.location.lat;
+                                        longitude = selectedPlace.geometry.location.lng;
+                                      });
+                                    },
+                                    initialPosition:kInitialPosition,
+                                    useCurrentLocation: true,
+                                  ),
+                                ),
+                              );
                         }),
                 Container(
                     child: Row(
