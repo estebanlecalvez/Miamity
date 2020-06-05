@@ -6,7 +6,6 @@ import 'package:miamitymds/Widgets/MiamityAppBar.dart';
 import 'package:miamitymds/auth.dart';
 import 'dart:math';
 
-
 class ShowDishesDetailsPage extends StatefulWidget {
   ShowDishesDetailsPage(
       {this.document,
@@ -27,6 +26,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
   bool _activeInfo = false;
   bool _activeOpinion = false;
   DocumentSnapshot user;
+  DocumentSnapshot yourUser;
   bool isThereAUser;
 
 // Fontions permettant de switch de vues
@@ -47,20 +47,26 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
 
   Future<void> isUserCharged() async {
     bool result = await widget.auth.isAUserConnected();
-    DocumentSnapshot document = await getUser();
+    DocumentSnapshot document = await getUsers();
     setState(() {
       user = document;
       isThereAUser = result;
     });
   }
 
-  Future<DocumentSnapshot> getUser() async {
+  Future<DocumentSnapshot> getUsers() async {
     DocumentSnapshot result = await Firestore.instance
         .collection("users")
         .document(widget.authorDishId)
         .get();
     setState(() {
       user = result;
+    });
+    var yourUserId = await widget.auth.currentUser();
+    DocumentSnapshot yourResult =
+        await Firestore.instance.collection("users").document(yourUserId).get();
+    setState(() {
+      yourUser = yourResult;
     });
     return user;
   }
@@ -81,6 +87,56 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     });
   }
 
+  _buildSelectedCentreDinteretList() {
+    List<Widget> choices = List();
+    List<String> matchingItems = List();
+    List<String> notMatchingItems = List();
+    print(user["centres_interet"]);
+    print(yourUser["centres_interet"]);
+    if (user["centres_interet"] != null) {
+      user["centres_interet"].forEach((item) {
+        yourUser["centres_interet"].forEach((yourItem) {
+          if (item == yourItem) {
+            if (matchingItems.contains(item)) {
+            } else {
+              matchingItems.add(item);
+            }
+          } 
+        });
+      });
+      user["centres_interet"].forEach((item) {
+        yourUser["centres_interet"].forEach((yourItem) {
+          if (item != yourItem) {
+            if (notMatchingItems.contains(item) || matchingItems.contains(item)) {
+            } else {
+              print("Adding matchingitem: " + item);
+              notMatchingItems.add(item);
+            }
+          } 
+        });
+      });
+    }
+    matchingItems.forEach((matchingItemsToAdd) {
+      choices.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Chip(
+          backgroundColor: Colors.orange[700],
+          label: Text(
+            matchingItemsToAdd,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ));
+    });
+    notMatchingItems.forEach((notMatchingItemsToAdd) {
+      choices.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Chip(label: Text(notMatchingItemsToAdd)),
+      ));
+    });
+    return choices;
+  }
+
   _buildTab() {
     if (_activeAllergens) {
       List<Widget> allergens = [];
@@ -98,17 +154,23 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     }
 
     if (_activeInfo) {
-      List<Widget> info = [];
-      info.add(new Flexible(
-          child: new Text(
-        "L'utilisateur n'a pas renseigné d'informations.",
-        textAlign: TextAlign.center,
-      )));
-      return new Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: info,
+      return Column(
+        children: [
+          Text(
+            "L'utilisateur n'a pas renseigné d'informations.",
+            textAlign: TextAlign.center,
+          ),
+          Padding(
+            padding: EdgeInsets.all(5),
+          ),
+          Text(
+            "Voici ces centres d'intérêts.",
+            textAlign: TextAlign.center,
+          ),
+          Wrap(
+            children: _buildSelectedCentreDinteretList(),
+          ),
+        ],
       );
     }
 
@@ -138,18 +200,23 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
       opinions.add(
         Row(
           children: <Widget>[
-            Row(children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal:12),),
-              Container(
-                width:MediaQuery.of(context).size.width * 0.3 ,
-                child: Text(
-                document[i]['username'],
-              ),),
-             
-              Padding(padding: EdgeInsets.symmetric(horizontal:12),),
-              generateRandomStars(),
-            ],)
-           
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  child: Text(
+                    document[i]['username'],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+                generateRandomStars(),
+              ],
+            )
           ],
         ),
       );
@@ -157,16 +224,19 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     return opinions;
   }
 
-  int randomStars(){
-     var rng = new Random();
-     return rng.nextInt(5);
+  int randomStars() {
+    var rng = new Random();
+    return rng.nextInt(5);
   }
 
-  Widget generateRandomStars(){
-    List<Widget> stars =[];
-    for (var i =0; i< randomStars()+1;i++) {
-      stars.add(Icon(Icons.star,color: Colors.orange[700],));
-    } 
+  Widget generateRandomStars() {
+    List<Widget> stars = [];
+    for (var i = 0; i < randomStars() + 1; i++) {
+      stars.add(Icon(
+        Icons.star,
+        color: Colors.orange[700],
+      ));
+    }
     return Row(children: stars);
   }
 
@@ -296,7 +366,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
                   ),
                   Icon(
                     Icons.star,
-                    color:Colors.grey[500],
+                    color: Colors.grey[500],
                     size: 30,
                   ),
                 ],

@@ -480,7 +480,7 @@ class _AddPlateState extends State<AddPlate> {
                       ],
                     ),
                     MiamityButtonWithIcon(
-                      title: "JE VEUX CUISINER",
+                      title: "J'AJOUTE MON PLAT",
                       icon: Icons.send,
                       onPressed: _submit,
                     ),

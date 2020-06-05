@@ -14,6 +14,7 @@ abstract class BaseAuth {
   Future<DocumentSnapshot> getCurrentUser();
   Future<void> signOut();
   Future<bool> isAUserConnected();
+  Future<DocumentSnapshot> getUser();
   void changePage(BuildContext context, Widget route);
 }
 
@@ -26,6 +27,11 @@ class Auth implements BaseAuth {
             email: email, password: password))
         .user;
     return user.uid;
+  }
+
+ Future<DocumentSnapshot> getUser() async {
+    var userId = await currentUser();
+    return await Firestore.instance.collection("users").document(userId).get();
   }
 
   Future<String> createUserWithEmailAndPassword(

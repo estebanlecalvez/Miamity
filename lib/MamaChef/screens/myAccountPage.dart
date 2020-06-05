@@ -96,6 +96,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ModifyMyAccountPage(auth: widget.auth, user: user)));
   }
 
+   _buildSelectedCentreDinteretList() {
+    List<Widget> choices = List();
+    if (user["centres_interet"] != null) {
+      user["centres_interet"].forEach((item) {
+        choices.add(Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Chip(
+            label: Text(item),
+          ),
+        ));
+      });
+    }
+    return choices;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -155,6 +170,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     readOnly: true,
                     onTap: null,
                   ),
+                  Wrap(
+                    children: _buildSelectedCentreDinteretList(),
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10),
                   ),
@@ -171,6 +189,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       _modifyAccount();
                     },
                   ),
+                 
                 ],
               )
             ])
