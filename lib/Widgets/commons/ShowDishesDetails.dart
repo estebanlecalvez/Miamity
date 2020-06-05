@@ -41,7 +41,6 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
   @override
   initState() {
     isUserCharged();
-    print(widget.document["description"]);
     super.initState();
   }
 
@@ -91,8 +90,7 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
     List<Widget> choices = List();
     List<String> matchingItems = List();
     List<String> notMatchingItems = List();
-    print(user["centres_interet"]);
-    print(yourUser["centres_interet"]);
+
     if (user["centres_interet"] != null) {
       user["centres_interet"].forEach((item) {
         yourUser["centres_interet"].forEach((yourItem) {
@@ -109,7 +107,6 @@ class ShowDishesDetailsState extends State<ShowDishesDetailsPage> {
           if (item != yourItem) {
             if (notMatchingItems.contains(item) || matchingItems.contains(item)) {
             } else {
-              print("Adding matchingitem: " + item);
               notMatchingItems.add(item);
             }
           } 

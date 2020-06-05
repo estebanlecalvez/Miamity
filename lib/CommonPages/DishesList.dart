@@ -41,7 +41,6 @@ class DishesListState extends State<DishesListPage> {
                           setState(() {
                             surPlace = newValue;
                           });
-                          print("Sur place: " + surPlace.toString());
                         },
                       ),
                       Text("Sur place"),
