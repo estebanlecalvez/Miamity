@@ -19,6 +19,9 @@ import 'package:miamitymds/Widgets/MiamityTextFormField.dart';
 import 'package:miamitymds/Widgets/PreviewDishCard.dart';
 import 'package:miamitymds/auth.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:miamitymds/Widgets/MiamityButtonWithIcon.dart';
+import 'package:miamitymds/CommonPages/DishesList.dart';
+
 
 class Dish {
   DateTime dateBegin, dateEnding;
@@ -183,8 +186,8 @@ class _AddPlateState extends State<AddPlate> {
 
   void _openFileExplorer() async {
     ///Check si les permissions ont été données. Sinon les demande.
-    var permissionCamera =await Permission.camera.request().isGranted;
-    var permissionPhoto =await Permission.photos.request().isGranted;
+    var permissionCamera = await Permission.camera.request().isGranted;
+    var permissionPhoto = await Permission.photos.request().isGranted;
     if (permissionCamera && permissionPhoto) {
       print("permission already granted");
     } else {
@@ -192,7 +195,7 @@ class _AddPlateState extends State<AddPlate> {
         Permission.camera,
         Permission.photos,
       ].request();
-     print(statuses[Permission.location]);
+      print(statuses[Permission.location]);
     }
   }
 
@@ -226,6 +229,13 @@ class _AddPlateState extends State<AddPlate> {
         isSuccess = true;
         message = "Plat ajouté avec succès";
       });
+      if (isSuccess) {
+       widget.auth.changePage(
+                        context,
+                        DishesListPage(
+                            auth: widget.auth,
+                            onSignedOut: widget.onSignedOut));
+      }
     } else {
       setState(() {
         isSuccess = false;
@@ -369,7 +379,9 @@ class _AddPlateState extends State<AddPlate> {
                                     FormBuilderValidators.required(),
                                   ],
                                 )),
-                                Padding(padding: EdgeInsets.symmetric(vertical:4),),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                            ),
                             MiamityFormBuilderTextField(
                               attribute: 'price',
                               label: 'Prix par part',
@@ -455,41 +467,22 @@ class _AddPlateState extends State<AddPlate> {
                             name: name,
                             nombrePart: part,
                             price: price)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: MaterialButton(
-                            color: Colors.green,
-                            onPressed: _submit,
-                            child: Text('Mettre en ligne'),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: MaterialButton(
-                            color: Colors.grey,
-                            onPressed: () => {
-                              formKey.currentState.reset(),
-                            },
-                            child: Text('Reset'),
-                          ),
-                        ),
-                      ],
-                    ),
                     Wrap(
                       children: <Widget>[
                         isSuccess
-                            ? Text(message,
-                                style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold))
-                            : Text(message,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold))
+                            ? Text("")
+                            : Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text(message,
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold)))
                       ],
+                    ),
+                    MiamityButtonWithIcon(
+                      title: "JE VEUX CUISINER",
+                      icon: Icons.send,
+                      onPressed: _submit,
                     ),
                   ],
                 ),
@@ -514,8 +507,7 @@ class _AddPlateState extends State<AddPlate> {
 
     File croppedImage = await ImageCropper.cropImage(
       sourcePath: image.path,
-      aspectRatio:CropAspectRatio(ratioX: 1.3, ratioY: 1.0),
-
+      aspectRatio: CropAspectRatio(ratioX: 1.3, ratioY: 1.0),
       maxWidth: 400,
       maxHeight: 400,
     );
