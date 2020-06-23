@@ -98,7 +98,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.5"
+    version: "2.1.4"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -141,13 +141,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  fake_async:
-    dependency: transitive
-    description:
-      name: fake_async
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   file:
     dependency: transitive
     description:
@@ -229,7 +222,7 @@ packages:
       name: flutter_chips_input
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.0-dev.1"
+    version: "1.9.0-dev.3"
   flutter_colorpicker:
     dependency: transitive
     description:
@@ -330,7 +323,7 @@ packages:
       name: google_maps_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.28+1"
+    version: "0.5.27+2"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
@@ -372,7 +365,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.13"
+    version: "2.1.12"
   image_cropper:
     dependency: "direct main"
     description:
@@ -456,7 +449,7 @@ packages:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.0"
+    version: "1.6.4"
   path_provider:
     dependency: "direct main"
     description:
@@ -491,7 +484,7 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.0"
+    version: "1.8.0+1"
   permission_handler:
     dependency: "direct main"
     description:
@@ -512,7 +505,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.4"
+    version: "2.4.0"
   phone_number:
     dependency: transitive
     description:
@@ -547,7 +540,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.2"
+    version: "4.0.5+1"
   quiver:
     dependency: transitive
     description:
@@ -734,7 +727,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.7.0"
+    version: "3.6.1"
   yaml:
     dependency: transitive
     description:
@@ -744,4 +737,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
-  flutter: ">=1.16.3 <2.0.0"
+  flutter: ">=1.12.13+hotfix.6 <2.0.0"

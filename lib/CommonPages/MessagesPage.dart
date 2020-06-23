@@ -78,7 +78,6 @@ class _MessagePageState extends State<MessagesPage> {
                     Column(
                       children: <Widget>[
                         Container(
-                            padding: EdgeInsets.only(right: 30.0),
                             child: document["profile_picture"] != null &&
                                     document["profile_picture"] != ""
                                 ? CircleAvatar(
@@ -104,6 +103,7 @@ class _MessagePageState extends State<MessagesPage> {
                         Row(
                           children: <Widget>[
                             Container(
+                              width: MediaQuery.of(context).size.width * 0.7,
                               child: Text(
                                 lastMessage,
                                 style: TextStyle(fontSize: 13),
